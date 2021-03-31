@@ -182,14 +182,14 @@ class DataCollatorCTCWithPadding:
         # split inputs and labels since they have to be of different lenghts and need
         # different padding methods
 
-        input_features = [{"input_values": feature["input_values"][:-1]} for feature in features]
+        input_features = [{"input_values": feature["input_values"]} for feature in features]
         
         def onehot(lbl):
             onehot = [0]*5
             onehot[int(lbl)] = 1
             return onehot
         
-        output_features = [onehot(feature["input_values"][-1]) for feature in features]
+        output_features = [onehot(feature["labels"]) for feature in features]
         
         
         batch = self.processor.pad(
@@ -229,6 +229,7 @@ class CustomClassificationModel(Wav2Vec2PreTrainedModel):
         output_attentions=None,
         output_hidden_states=None,
         return_dict=None,
+        labels=None
     ):
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
         
@@ -329,7 +330,6 @@ def main():
     # Set the verbosity to info of the Transformers logger (on main process only):
     if is_main_process(training_args.local_rank):
         transformers.utils.logging.set_verbosity_info()
-    logger.info("Training/evaluation parameters %s", training_args)
 
     # Set seed before initializing model.
     set_seed(training_args.seed)
@@ -339,8 +339,8 @@ def main():
     train_dataset = datasets.load_dataset("dialect_speech_corpus", split="train", cache_dir=model_args.cache_dir)
     eval_dataset = datasets.load_dataset("dialect_speech_corpus", split="train", cache_dir=model_args.cache_dir)
 
+    lbls = [sample['label'] for sample in eval_dataset]
 
-    
     tokenizer = Wav2Vec2CTCTokenizer(
         "vocab.json",
         unk_token="[UNK]",
@@ -402,7 +402,7 @@ def main():
             len(set(batch["sampling_rate"])) == 1
         ), f"Make sure all inputs have the same sampling rate of {processor.feature_extractor.sampling_rate}."
         batch["input_values"] = processor(batch["speech"], sampling_rate=batch["sampling_rate"][0]).input_values
-        batch["input_values"] = [np.append(labels, batch["parent"][i]) for i, labels in enumerate(batch["input_values"])]
+        batch["labels"] = batch["parent"]
         return batch
 
     train_dataset = train_dataset.map(
