@@ -25,8 +25,6 @@ dataset = dataset.map(map_to_array, remove_columns=["file"])
 ```
 """
 
-_URL = "mgb3.zip"
-
 import soundfile as sf
 
 class DialectSpeechCorpusConfig(datasets.BuilderConfig):
@@ -75,7 +73,6 @@ class DialectSpeechCorpus(datasets.GeneratorBasedBuilder):
                 }
             ),
             supervised_keys=("file", "text"),
-            homepage=_URL,
             citation=_CITATION,
         )
 
