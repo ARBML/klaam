@@ -338,8 +338,8 @@ def main():
 
     # Get the datasets:
 
-    train_dataset = datasets.load_dataset("/workspace/wav2vec/dialect_speech_corpus", split="train", cache_dir=model_args.cache_dir).shuffle()
-    eval_dataset = datasets.load_dataset("/workspace/wav2vec/dialect_speech_corpus", split="dev", cache_dir=model_args.cache_dir).shuffle()
+    train_dataset = datasets.load_dataset("dialect_speech_corpus", split="train", cache_dir=model_args.cache_dir).shuffle()
+    eval_dataset = datasets.load_dataset("dialect_speech_corpus", split="train", cache_dir=model_args.cache_dir).shuffle()
 
 
     
