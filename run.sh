@@ -4,13 +4,14 @@ python run_classifier.py \
     --output_dir=/content/model_dir/dialects \
     --cache_dir=/content/data_dir/ \
     --overwrite_output_dir \
-    --num_train_epochs="5" \
-    --per_device_train_batch_size="8" \
-    --preprocessing_num_workers="3" \
-    --learning_rate="3e-4" \
+    --freeze_feature_extractor \
+    --num_train_epochs="20" \
+    --per_device_train_batch_size="16" \
+    --preprocessing_num_workers="1" \
+    --learning_rate="3e-5" \
     --warmup_steps="1" \
     --evaluation_strategy="steps"\
-    --save_steps="1" \
+    --save_steps="100" \
     --eval_steps="1" \
     --save_total_limit="1" \
     --logging_steps="1" \

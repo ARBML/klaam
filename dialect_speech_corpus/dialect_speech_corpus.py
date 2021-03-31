@@ -6,7 +6,7 @@ import os
 
 import datasets
 import soundfile as sf 
-
+from random import shuffle
 _CITATION = """
 """
 
@@ -87,18 +87,27 @@ class DialectSpeechCorpus(datasets.GeneratorBasedBuilder):
         """Generate examples from a Librispeech archive_path."""
         wav_dir = os.path.join(archive_path, "wav")
         
-        for _id, c in enumerate(os.listdir(wav_dir)):
+        paths = []
+        labls = []
+
+        for _, c in enumerate(os.listdir(wav_dir)):
             if os.path.isdir(f'{wav_dir}/{c}/'):
                 for file in os.listdir(f'{wav_dir}/{c}/'):
                     if file.endswith('.wav'):
                         wav_path = f'{wav_dir}/{c}/{file}'
                         f = sf.SoundFile(wav_path)
                         seconds = int(len(f)) // f.samplerate
-                        if seconds < 5 or seconds > 20:
-                            continue 
-                        example = {
-                            "file": wav_path,
-                            "label":c
-                        }
-                        yield str(_id), example
+                        if seconds > 5 and seconds < 20:
+                            paths.append(wav_path)
+                            labls.append(c)
+
+        data = list(zip(paths, labls))
+        random.Random(4).shuffle(data)
+        paths, labls = zip(*data)
+        for i in range(len(paths)):
+          example = {
+              "file": paths[i],
+              "label":labls[i]
+          }
+          yield str(i), example
 
