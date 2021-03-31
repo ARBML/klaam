@@ -211,13 +211,12 @@ class CustomClassificationModel(Wav2Vec2PreTrainedModel):
         
         self.wav2vec2 = Wav2Vec2Model(config)
         
-        self.inner_dim = 512
+        self.inner_dim = 128
         self.feature_size = 999
         
         self.tanh = nn.Tanh()
         self.linear1 = nn.Linear(1024, self.inner_dim)
         self.linear2 = nn.Linear(self.inner_dim*self.feature_size, 5)
-#         self.linear3 = nn.Linear(256, 5) 
         self.init_weights()
         
     def freeze_feature_extractor(self):
@@ -234,7 +233,8 @@ class CustomClassificationModel(Wav2Vec2PreTrainedModel):
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
         
         outputs = self.wav2vec2(
-            input_values['input_values'],
+            input_values,
+            attention_mask=attention_mask,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
             return_dict=return_dict,
@@ -242,8 +242,6 @@ class CustomClassificationModel(Wav2Vec2PreTrainedModel):
         x = self.linear1(outputs[0]) 
         x = self.tanh(x)
         x = self.linear2(x.view(-1, self.inner_dim*self.feature_size))
-#         x = self.tanh(x)
-#         x = self.linear3(x) # outputshape torch.Size([32, 566, 5])
         
         return x
         
@@ -280,7 +278,7 @@ class CTCTrainer(Trainer):
     
     def compute_loss(self, model, inputs, return_outputs=False):
         labels = inputs.pop("labels").to('cuda')
-        outputs = model(inputs) # torch.Size([32, 5])
+        outputs = model(**inputs) # torch.Size([32, 5])
         loss_fct = torch.nn.CrossEntropyLoss()
         loss = loss_fct(outputs,
                         labels.argmax(-1).long())
@@ -338,8 +336,8 @@ def main():
 
     # Get the datasets:
 
-    train_dataset = datasets.load_dataset("dialect_speech_corpus", split="train", cache_dir=model_args.cache_dir).shuffle()
-    eval_dataset = datasets.load_dataset("dialect_speech_corpus", split="train", cache_dir=model_args.cache_dir).shuffle()
+    train_dataset = datasets.load_dataset("dialect_speech_corpus", split="train", cache_dir=model_args.cache_dir)
+    eval_dataset = datasets.load_dataset("dialect_speech_corpus", split="train", cache_dir=model_args.cache_dir)
 
 
     

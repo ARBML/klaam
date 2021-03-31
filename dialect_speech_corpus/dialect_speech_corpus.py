@@ -6,7 +6,8 @@ import os
 
 import datasets
 import soundfile as sf 
-from random import shuffle
+import random 
+
 _CITATION = """
 """
 
