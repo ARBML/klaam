@@ -6,15 +6,15 @@ python run_classifier.py \
     --overwrite_output_dir \
     --freeze_feature_extractor \
     --num_train_epochs="20" \
-    --per_device_train_batch_size="16" \
+    --per_device_train_batch_size="8" \
     --preprocessing_num_workers="1" \
     --learning_rate="3e-5" \
     --warmup_steps="1" \
     --evaluation_strategy="steps"\
     --save_steps="100" \
-    --eval_steps="1" \
+    --eval_steps="13" \
     --save_total_limit="1" \
-    --logging_steps="1" \
+    --logging_steps="13" \
     --group_by_length \
     --gradient_checkpointing \
     --do_eval \
