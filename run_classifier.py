@@ -199,8 +199,12 @@ class DataCollatorCTCWithPadding:
             pad_to_multiple_of=self.pad_to_multiple_of,
             return_tensors="pt",
         )
-
+        # for val in batch['input_values']:
+        #   print(val[:10])
+        #   print(val[-10:])
+        # print(batch['input_values'].shape)
         batch["labels"] = torch.tensor(output_features)
+        # print(batch["labels"].argmax(-1))
         return batch
 
 
@@ -232,7 +236,7 @@ class CustomClassificationModel(Wav2Vec2PreTrainedModel):
         labels=None
     ):
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
-        
+
         outputs = self.wav2vec2(
             input_values,
             attention_mask=attention_mask,
@@ -244,7 +248,7 @@ class CustomClassificationModel(Wav2Vec2PreTrainedModel):
         x = self.tanh(x)
         x = self.linear2(x.view(-1, self.inner_dim*self.feature_size))
         
-        return x
+        return {'logits':x}
         
 class CTCTrainer(Trainer):
     def training_step(self, model: nn.Module, inputs: Dict[str, Union[torch.Tensor, Any]]) -> torch.Tensor:
@@ -278,15 +282,17 @@ class CTCTrainer(Trainer):
         return loss.detach()
     
     def compute_loss(self, model, inputs, return_outputs=False):
-        labels = inputs.pop("labels").to('cuda')
+        # labels = inputs.pop("labels").to('cuda')
+        labels = inputs['labels'].to('cuda')
         outputs = model(**inputs) # torch.Size([32, 5])
         loss_fct = torch.nn.CrossEntropyLoss()
-        loss = loss_fct(outputs,
+        loss = loss_fct(outputs['logits'],
                         labels.argmax(-1).long())
+        
         return (loss, outputs) if return_outputs else loss
+
+
     
-
-
 def main():
     # See all possible arguments in src/transformers/training_args.py
     # or by passing the --help flag to this script.
@@ -337,7 +343,7 @@ def main():
     # Get the datasets:
 
     train_dataset = datasets.load_dataset("dialect_speech_corpus", split="train", cache_dir=model_args.cache_dir)
-    eval_dataset = datasets.load_dataset("dialect_speech_corpus", split="train", cache_dir=model_args.cache_dir)
+    eval_dataset = datasets.load_dataset("dialect_speech_corpus", split="dev", cache_dir=model_args.cache_dir)
 
     lbls = [sample['label'] for sample in eval_dataset]
 
@@ -393,8 +399,6 @@ def main():
         remove_columns=eval_dataset.column_names,
         num_proc=data_args.preprocessing_num_workers,
     )
-
-   
     
     def prepare_dataset(batch):
         # check that all files have the correct sampling rate
@@ -420,8 +424,6 @@ def main():
         num_proc=data_args.preprocessing_num_workers,
     )
     
-
-
     from sklearn.metrics import classification_report, confusion_matrix
 
     def compute_metrics(pred):

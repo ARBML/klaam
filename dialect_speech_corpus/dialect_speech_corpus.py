@@ -96,11 +96,8 @@ class DialectSpeechCorpus(datasets.GeneratorBasedBuilder):
                 for file in os.listdir(f'{wav_dir}/{c}/'):
                     if file.endswith('.wav'):
                         wav_path = f'{wav_dir}/{c}/{file}'
-                        f = sf.SoundFile(wav_path)
-                        seconds = int(len(f)) // f.samplerate
-                        if seconds > 5 and seconds < 20:
-                            paths.append(wav_path)
-                            labls.append(c)
+                        paths.append(wav_path)
+                        labls.append(c)
 
         data = list(zip(paths, labls))
         random.Random(4).shuffle(data)
