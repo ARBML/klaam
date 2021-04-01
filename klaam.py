@@ -20,7 +20,7 @@ class SpeechClassification:
 
     def __init__(self, path = None):
         if path is None:
-            dir = 'Zaid/wav2vec2-large-xlsr-arabic-classification'
+            dir = 'Zaid/wav2vec2-large-xlsr-dialect-classification'
         else:
             dir = path
         self.model = Wav2Vec2ClassificationModel.from_pretrained(dir).to("cuda")

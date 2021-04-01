@@ -5,11 +5,6 @@ Arabic speech recognition and classification
  <img src = "https://raw.githubusercontent.com/ARBML/klaam/main/klaam_logo.PNG" width = "250px"/>
  </p>
  
- ## Installation 
- ```
- pip install klaam
- ```
- 
  ## Usage 
  
  ```python
@@ -25,11 +20,12 @@ Arabic speech recognition and classification
  ## Datasets 
  
 | Dataset | Description | link |
-| MGB-3  | Egyptian Arabic Speech recognition in the wild. Every sentence was annotated by four annotators. More than 15 hours have been collected from YouTube.  |  requires registeration https://arabicspeech.org/mgb3-asr/|
-| ADI-5  | More than 50 hours collected from Aljazeera TV.  4 regional dialectal: Egyptian (EGY), Levantine (LAV), Gulf (GLF), North African (NOR), and Modern Standard Arabic (MSA). This dataset is a part of the MGB-3 challenge.  | requires registeration https://arabicspeech.org/mgb3-adi/|
-|Common voice | Multlilingual dataset avilable on huggingface | https://github.com/huggingface/datasets/tree/master/datasets/common_voice. |
+|---------| ------------------------------ | ---- |
+| MGB-3  | Egyptian Arabic Speech recognition in the wild. Every sentence was annotated by four annotators. More than 15 hours have been collected from YouTube.  |  requires registeration [here](https://arabicspeech.org/mgb3-asr/)|
+| ADI-5  | More than 50 hours collected from Aljazeera TV.  4 regional dialectal: Egyptian (EGY), Levantine (LAV), Gulf (GLF), North African (NOR), and Modern Standard Arabic (MSA). This dataset is a part of the MGB-3 challenge.  | requires registeration [here](https://arabicspeech.org/mgb3-adi/)|
+|Common voice | Multlilingual dataset avilable on huggingface | [here](https://github.com/huggingface/datasets/tree/master/datasets/common_voice). |
 
-##Training
+## Training
 
 ### classification 
 ```
@@ -73,3 +69,21 @@ python run_recognition.py \
     --do_eval \
     --do_train \
 ```
+## Example Notebooks 
+<table class="tg">
+
+  <tr>
+    <th class="tg-yw4l"><b>Name</b></th>
+    <th class="tg-yw4l"><b>Description</b></th>
+    <th class="tg-yw4l"><b>Notebook</b></th>
+  </tr>
+
+  <tr>
+    <td class="tg-yw4l">Speech Classification</td>
+    <td class="tg-yw4l">Classify input into either MSA, GULF, North Africa, Egypt or Levantine </td>
+    <td class="tg-yw4l"><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/demo.ipynb">
+    <img src="https://colab.research.google.com/assets/colab-badge.svg"  >
+    </a></td>
+  </tr>
+<table>
+
