@@ -13,11 +13,11 @@ Arabic speech recognition and classification
  ## Usage 
  
  ```python
- from klaam import ClassificationModel
- model = ClassificationModel()
+ from klaam import SpeechClassification
+ model = SpeechClassification()
  model.classify('file.wav')
  
- from klaam import RecognitionModel
- model = RecognitionModel()
+ from klaam import SpeechRecognition
+ model = SpeechRecognition()
  model.transcribe('file.wav')
  ```
