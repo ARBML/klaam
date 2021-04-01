@@ -21,15 +21,14 @@ from transformers import (
     HfArgumentParser,
     Trainer,
     TrainingArguments,
-    Wav2Vec2CTCTokenizer,
     Wav2Vec2FeatureExtractor,
-    Wav2Vec2ForCTC,
     Wav2Vec2Model,
     Wav2Vec2PreTrainedModel,
     Wav2Vec2Processor,
     is_apex_available,
     set_seed,
 )
+from processor import CustomWav2Vec2Processor
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
 import soundfile as sf
 from sklearn.metrics import accuracy_score
@@ -171,7 +170,7 @@ class DataCollatorCTCWithPadding:
             7.5 (Volta).
     """
 
-    processor: Wav2Vec2Processor
+    processor: CustomWav2Vec2Processor
     padding: Union[bool, str] = True
     max_length: Optional[int] = 320000
     max_length_labels: Optional[int] = None
@@ -347,16 +346,11 @@ def main():
 
     lbls = [sample['label'] for sample in eval_dataset]
 
-    tokenizer = Wav2Vec2CTCTokenizer(
-        "vocab.json",
-        unk_token="[UNK]",
-        pad_token="[PAD]",
-        word_delimiter_token="|",
-    )
+
     feature_extractor = Wav2Vec2FeatureExtractor(
         feature_size=1, sampling_rate=16_000, padding_value=0.0, do_normalize=True, return_attention_mask=True
     )
-    processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer=tokenizer)
+    processor = CustomWav2Vec2Processor(feature_extractor=feature_extractor)
     model = CustomClassificationModel.from_pretrained(
         "facebook/wav2vec2-large-xlsr-53", 
         attention_dropout=0.01,
