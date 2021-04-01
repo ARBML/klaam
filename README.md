@@ -25,7 +25,6 @@ Arabic speech recognition and classification
  ## Datasets 
  
 | Dataset | Description | link |
-| ------------- | ------------- | -------------|
 | MGB-3  | Egyptian Arabic Speech recognition in the wild. Every sentence was annotated by four annotators. More than 15 hours have been collected from YouTube.  |  requires registeration https://arabicspeech.org/mgb3-asr/|
 | ADI-5  | More than 50 hours collected from Aljazeera TV.  4 regional dialectal: Egyptian (EGY), Levantine (LAV), Gulf (GLF), North African (NOR), and Modern Standard Arabic (MSA). This dataset is a part of the MGB-3 challenge.  | requires registeration https://arabicspeech.org/mgb3-adi/|
 |Common voice | Multlilingual dataset avilable on huggingface | https://github.com/huggingface/datasets/tree/master/datasets/common_voice. |
