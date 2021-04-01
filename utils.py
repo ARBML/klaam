@@ -22,6 +22,6 @@ def predict(data, processor, model):
     input_values = {'input_values':features.input_values.to("cuda")}
     attention_mask = features.attention_mask.to("cuda")
     with torch.no_grad():
-        logits = model(**input_values, attention_mask=attention_mask)
-    pred_id = torch.argmax(logits, dim=-1)[0]
+        outputs = model(**input_values, attention_mask=attention_mask)
+    pred_id = torch.argmax(outputs['logits'], dim=-1)[0]
     return pred_id
