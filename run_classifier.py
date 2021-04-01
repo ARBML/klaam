@@ -11,7 +11,6 @@ import librosa
 import datasets
 import numpy as np
 import torch
-import torchaudio
 from packaging import version
 from torch import nn
 from torch.nn import functional as F
@@ -20,15 +19,14 @@ import transformers
 from transformers import (
     HfArgumentParser,
     Trainer,
-    TrainingArguments,
     Wav2Vec2FeatureExtractor,
-    Wav2Vec2Model,
-    Wav2Vec2PreTrainedModel,
-    Wav2Vec2Processor,
+    TrainingArguments,
     is_apex_available,
     set_seed,
 )
 from processor import CustomWav2Vec2Processor
+from models import Wav2Vec2ClassificationModel
+
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
 import soundfile as sf
 from sklearn.metrics import accuracy_score
@@ -207,48 +205,6 @@ class DataCollatorCTCWithPadding:
         return batch
 
 
-from transformers import BertModel
-class CustomClassificationModel(Wav2Vec2PreTrainedModel):
-    def __init__(self, config):
-        super().__init__(config)
-        
-        self.wav2vec2 = Wav2Vec2Model(config)
-        
-        self.inner_dim = 128
-        self.feature_size = 999
-        
-        self.tanh = nn.Tanh()
-        self.linear1 = nn.Linear(1024, self.inner_dim)
-        self.linear2 = nn.Linear(self.inner_dim*self.feature_size, 5)
-        self.init_weights()
-        
-    def freeze_feature_extractor(self):
-        self.wav2vec2.feature_extractor._freeze_parameters()
-
-    def forward(
-        self,
-        input_values,
-        attention_mask=None,
-        output_attentions=None,
-        output_hidden_states=None,
-        return_dict=None,
-        labels=None
-    ):
-        return_dict = return_dict if return_dict is not None else self.config.use_return_dict
-
-        outputs = self.wav2vec2(
-            input_values,
-            attention_mask=attention_mask,
-            output_attentions=output_attentions,
-            output_hidden_states=output_hidden_states,
-            return_dict=return_dict,
-        )
-        x = self.linear1(outputs[0]) 
-        x = self.tanh(x)
-        x = self.linear2(x.view(-1, self.inner_dim*self.feature_size))
-        
-        return {'logits':x}
-        
 class CTCTrainer(Trainer):
     def training_step(self, model: nn.Module, inputs: Dict[str, Union[torch.Tensor, Any]]) -> torch.Tensor:
         """
@@ -351,7 +307,7 @@ def main():
         feature_size=1, sampling_rate=16_000, padding_value=0.0, do_normalize=True, return_attention_mask=True
     )
     processor = CustomWav2Vec2Processor(feature_extractor=feature_extractor)
-    model = CustomClassificationModel.from_pretrained(
+    model = Wav2Vec2ClassificationModel.from_pretrained(
         "facebook/wav2vec2-large-xlsr-53", 
         attention_dropout=0.01,
         hidden_dropout=0.01,
