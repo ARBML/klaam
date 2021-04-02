@@ -26,6 +26,24 @@ Arabic speech recognition and classification using wav2vec models. This reposito
 | ADI-5  | More than 50 hours collected from Aljazeera TV.  4 regional dialectal: Egyptian (EGY), Levantine (LAV), Gulf (GLF), North African (NOR), and Modern Standard Arabic (MSA). This dataset is a part of the MGB-3 challenge.  | requires registeration [here](https://arabicspeech.org/mgb3-adi/)|
 |Common voice | Multlilingual dataset avilable on huggingface | [here](https://github.com/huggingface/datasets/tree/master/datasets/common_voice). |
 
+## Example Notebooks 
+<table class="tg">
+
+  <tr>
+    <th class="tg-yw4l"><b>Name</b></th>
+    <th class="tg-yw4l"><b>Description</b></th>
+    <th class="tg-yw4l"><b>Notebook</b></th>
+  </tr>
+
+  <tr>
+    <td class="tg-yw4l">Demo</td>
+    <td class="tg-yw4l">Classification and Recongition example  in a few lines of code.</td>
+    <td class="tg-yw4l"><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/demo.ipynb">
+    <img src="https://colab.research.google.com/assets/colab-badge.svg"  >
+    </a></td>
+  </tr>
+<table>
+
 ## Training
 
 The scripts are a modification of this [repo](https://github.com/jqueguiner/wav2vec2-sprint). 
@@ -102,21 +120,5 @@ python run_common_voice.py \
     --do_train --do_eval \
     --max_train_samples 100 --max_val_samples 100
 ```
-## Example Notebooks 
-<table class="tg">
 
-  <tr>
-    <th class="tg-yw4l"><b>Name</b></th>
-    <th class="tg-yw4l"><b>Description</b></th>
-    <th class="tg-yw4l"><b>Notebook</b></th>
-  </tr>
-
-  <tr>
-    <td class="tg-yw4l">Speech Classification</td>
-    <td class="tg-yw4l">Classify input into either MSA, GULF, North Africa, Egypt or Levantine </td>
-    <td class="tg-yw4l"><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/demo.ipynb">
-    <img src="https://colab.research.google.com/assets/colab-badge.svg"  >
-    </a></td>
-  </tr>
-<table>
 
