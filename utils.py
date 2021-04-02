@@ -2,9 +2,9 @@ import torch
 import librosa    
 
 
-def load_file_to_data(file, max_len = 20, srate = 16_000):
+def load_file_to_data(file, srate = 16_000):
     batch = {} 
-    speech, sampling_rate = y, s = librosa.load('test.wav', sr=srate)
+    speech, sampling_rate = librosa.load(file, sr=srate)
     batch["speech"] = speech
     batch["sampling_rate"] = sampling_rate
     return batch
