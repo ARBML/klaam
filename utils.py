@@ -32,7 +32,7 @@ def predict(data, model, processor, mode = 'rec', bw = False):
     
     if mode == 'rec':
         pred_ids = torch.argmax(outputs.logits, dim=-1)
-        text =  processor.batch_decode(pred_ids)
+        text =  processor.batch_decode(pred_ids)[0]
 
         if bw:
             text = buckwalter.untrans(text)
