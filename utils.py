@@ -1,6 +1,6 @@
 import torch
 import librosa    
-
+from lang_trans.arabic import buckwalter
 
 def load_file_to_data(file, srate = 16_000):
     batch = {} 
@@ -10,7 +10,7 @@ def load_file_to_data(file, srate = 16_000):
     return batch
 
 
-def predict(data, model, processor, mode = 'rec'):
+def predict(data, model, processor, mode = 'rec', bw = False):
     if mode == 'rec':
         features = processor(data["speech"],
                             sampling_rate=data["sampling_rate"],
@@ -32,7 +32,10 @@ def predict(data, model, processor, mode = 'rec'):
     
     if mode == 'rec':
         pred_ids = torch.argmax(outputs.logits, dim=-1)
-        return processor.batch_decode(pred_ids)
+        text =  processor.batch_decode(pred_ids)
+        if bw:
+            text = buckwalter.untrans(text)
+        return text 
     else:
         pred_ids = torch.argmax(outputs['logits'], dim=-1)[0]
         dialects = ['EGY','NOR','GLF','LAV','MSA']
