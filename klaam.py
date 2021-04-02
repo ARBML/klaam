@@ -14,7 +14,7 @@ class SpeechRecognition:
         self.processor = Wav2Vec2Processor.from_pretrained(model_dir)
     
     def transcribe(self, wav_file):
-        return predict(load_file_to_data(wav_file), self.model, self.processor)
+        return predict(load_file_to_data(wav_file), self.model, self.processor, mode = 'rec')
 
 class SpeechClassification:
 
@@ -27,4 +27,4 @@ class SpeechClassification:
         self.processor = CustomWav2Vec2Processor.from_pretrained(dir)
     
     def classify(self, wav_file):
-        return predict(load_file_to_data(wav_file), self.model, self.processor)
+        return predict(load_file_to_data(wav_file), self.model, self.processor, mode = 'cls')

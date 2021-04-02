@@ -10,7 +10,7 @@ def load_file_to_data(file, max_len = 20, srate = 16_000):
 
 
 def predict(data, model, processor, mode = 'rec'):
-    if 'rec':
+    if mode == 'rec':
         features = processor(data["speech"], sampling_rate=data["sampling_rate"], padding=True, return_tensors="pt")
     else:
         features = processor(data["speech"], 
@@ -23,7 +23,6 @@ def predict(data, model, processor, mode = 'rec'):
     attention_mask = features.attention_mask.to("cuda")
     with torch.no_grad():
         outputs = model(input_values, attention_mask=attention_mask)
-    
     
     if mode == 'rec':
         pred_ids = torch.argmax(outputs.logits, dim=-1)[0]
