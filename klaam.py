@@ -1,5 +1,5 @@
 from transformers import (Wav2Vec2ForCTC,Wav2Vec2Processor)
-from .utils import load_file_to_data, predict
+from utils import load_file_to_data, predict
 from models import Wav2Vec2ClassificationModel
 from processor import CustomWav2Vec2Processor
 
