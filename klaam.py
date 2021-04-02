@@ -6,19 +6,23 @@ from processors import CustomWav2Vec2Processor
 class SpeechRecognition:
 
     def __init__(self, lang = 'egy', path = None):
+        self.lang = lang
+        self.bw = False
         if path is None:
             if lang == 'egy':
                 model_dir = 'Zaid/wav2vec2-large-xlsr-53-arabic-egyptian'
             elif lang == 'msa':
                 model_dir = 'elgeish/wav2vec2-large-xlsr-53-arabic'
+                self.bw = True
         else:
             model_dir = path
         self.model = Wav2Vec2ForCTC.from_pretrained(model_dir).to("cuda")
         self.processor = Wav2Vec2Processor.from_pretrained(model_dir)
     
     def transcribe(self, wav_file):
+        
         return predict(load_file_to_data(wav_file), 
-                self.model, self.processor, mode = 'rec', bw = False)
+                self.model, self.processor, mode = 'rec', bw = self.bw)
 
 class SpeechClassification:
 

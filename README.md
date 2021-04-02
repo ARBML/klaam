@@ -34,6 +34,16 @@ Arabic speech recognition and classification using wav2vec models. This reposito
 | ADI-5  | More than 50 hours collected from Aljazeera TV.  4 regional dialectal: Egyptian (EGY), Levantine (LAV), Gulf (GLF), North African (NOR), and Modern Standard Arabic (MSA). This dataset is a part of the MGB-3 challenge.  | requires registeration [here](https://arabicspeech.org/mgb3-adi/)|
 |Common voice | Multlilingual dataset avilable on huggingface | [here](https://github.com/huggingface/datasets/tree/master/datasets/common_voice). |
 
+## Models 
+
+We currently support three models, all of them are avilable on transformers. 
+
+|Language | Description | Source |
+|-------- | ----------- | ------ |
+|Egyptian | Speech recognition | [wav2vec2-large-xlsr-53-arabic-egyptian](https://huggingface.co/Zaid/wav2vec2-large-xlsr-53-arabic-egyptian)|
+|Standard Arabic | Speech recognition | [wav2vec2-large-xlsr-53-arabic](https://huggingface.co/elgeish/wav2vec2-large-xlsr-53-arabic)
+|EGY, NOR, LAV, GLF, MSA | Speech classification | [wav2vec2-large-xlsr-dialect-classification](https://huggingface.co/Zaid/wav2vec2-large-xlsr-dialect-classification)|
+
 ## Example Notebooks 
 <table class="tg">
 
