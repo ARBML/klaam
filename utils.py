@@ -25,7 +25,7 @@ def predict(data, model, processor, mode = 'rec'):
         outputs = model(input_values, attention_mask=attention_mask)
     
     if mode == 'rec':
-        pred_ids = torch.argmax(outputs.logits, dim=-1)[0]
+        pred_ids = torch.argmax(outputs.logits, dim=-1)
         return processor.batch_decode(pred_ids)
     else:
         pred_ids = torch.argmax(outputs['logits'], dim=-1)[0]
