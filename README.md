@@ -1,9 +1,10 @@
 # klaam
-Arabic speech recognition and classification
+Arabic speech recognition and classification using wav2vec models. This repository allows training and prediction using pretrained models. 
 
  <p align="center"> 
  <img src = "https://raw.githubusercontent.com/ARBML/klaam/main/klaam_logo.PNG" width = "250px"/>
  </p>
+ 
  
  ## Usage 
  
@@ -27,7 +28,9 @@ Arabic speech recognition and classification
 
 ## Training
 
+The scripts are a modification of this [repo](https://github.com/jqueguiner/wav2vec2-sprint). 
 ### classification 
+This script is used for the classification task on the 5 classes. 
 ```
 python run_classifier.py \
     --model_name_or_path="facebook/wav2vec2-large-xlsr-53" \
@@ -50,6 +53,8 @@ python run_classifier.py \
 
 ### Recognition 
 
+This script is for training on the dataset for pretraining on the egyption dialects dataset. 
+
 ```
 python run_recognition.py \
     --model_name_or_path="facebook/wav2vec2-large-xlsr-53" \
@@ -68,6 +73,34 @@ python run_recognition.py \
     --logging_steps="100" \
     --do_eval \
     --do_train \
+```
+This script can be used for Arabic common voice training 
+
+```
+python run_common_voice.py \
+    --model_name_or_path="facebook/wav2vec2-large-xlsr-53" \
+    --dataset_config_name="ar" \
+    --output_dir=/path/to/output/ \
+    --cache_dir=/path/to/cache \
+    --overwrite_output_dir \
+    --num_train_epochs="1" \
+    --per_device_train_batch_size="32" \
+    --per_device_eval_batch_size="32" \
+    --evaluation_strategy="steps" \
+    --learning_rate="3e-4" \
+    --warmup_steps="500" \
+    --fp16 \
+    --freeze_feature_extractor \
+    --save_steps="10" \
+    --eval_steps="10" \
+    --save_total_limit="1" \
+    --logging_steps="10" \
+    --group_by_length \
+    --feat_proj_dropout="0.0" \
+    --layerdrop="0.1" \
+    --gradient_checkpointing \
+    --do_train --do_eval \
+    --max_train_samples 100 --max_val_samples 100
 ```
 ## Example Notebooks 
 <table class="tg">
