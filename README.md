@@ -17,6 +17,14 @@ Arabic speech recognition and classification using wav2vec models. This reposito
  model = SpeechRecognition()
  model.transcribe('file.wav')
  ```
+
+ There are two avilable models for recognition trageting MSA and egyptian dialect . You can set any of them using the `lang` attribute
+
+```python
+ from klaam import SpeechRecognition
+ model = SpeechRecognition(lang = 'msa')
+ model.transcribe('file.wav')
+ ```
  
  ## Datasets 
  
