@@ -29,4 +29,5 @@ def predict(data, model, processor, mode = 'rec'):
         return processor.batch_decode(pred_ids)
     else:
         pred_ids = torch.argmax(outputs['logits'], dim=-1)[0]
-        return pred_ids
+        dialects = ['EGY','NOR','GLF','LAV','MSA']
+        return dialects[pred_ids]
