@@ -1,9 +1,10 @@
-import soundfile as sf
 import torch
+import librosa    
+
 
 def load_file_to_data(file, max_len = 20, srate = 16_000):
     batch = {} 
-    speech, sampling_rate = sf.read(file, start = 0 , stop = max_len * srate)
+    speech, sampling_rate = y, s = librosa.load('test.wav', sr=srate)
     batch["speech"] = speech
     batch["sampling_rate"] = sampling_rate
     return batch
@@ -11,7 +12,12 @@ def load_file_to_data(file, max_len = 20, srate = 16_000):
 
 def predict(data, model, processor, mode = 'rec'):
     if mode == 'rec':
-        features = processor(data["speech"], sampling_rate=data["sampling_rate"], padding=True, return_tensors="pt")
+        features = processor(data["speech"],
+                            sampling_rate=data["sampling_rate"],
+                            padding=True,
+                            max_length=128000, 
+                            pad_to_multiple_of=128000,
+                            return_tensors="pt")
     else:
         features = processor(data["speech"], 
                         sampling_rate=data["sampling_rate"],
