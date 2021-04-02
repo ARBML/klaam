@@ -26,13 +26,14 @@ def predict(data, model, processor, mode = 'rec', bw = False):
                         padding=True, return_tensors="pt")
     
     input_values = features.input_values.to("cuda")
-    attention_mask = features.attention_mask.to("cuda")
+    # attention_mask = features.attention_mask.to("cuda")
     with torch.no_grad():
-        outputs = model(input_values, attention_mask=attention_mask)
+        outputs = model(input_values)
     
     if mode == 'rec':
         pred_ids = torch.argmax(outputs.logits, dim=-1)
         text =  processor.batch_decode(pred_ids)
+
         if bw:
             text = buckwalter.untrans(text)
         return text 
