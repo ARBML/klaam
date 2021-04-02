@@ -9,7 +9,7 @@ def load_file_to_data(file, max_len = 20, srate = 16_000):
     return batch
 
 
-def predict(data, processor, model, mode = 'rec'):
+def predict(data, model, processor, mode = 'rec'):
     if 'rec':
         features = processor(data["speech"], sampling_rate=data["sampling_rate"], padding=True, return_tensors="pt")
     else:
