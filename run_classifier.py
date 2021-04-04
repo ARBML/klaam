@@ -24,7 +24,7 @@ from transformers import (
     is_apex_available,
     set_seed,
 )
-from processor import CustomWav2Vec2Processor
+from processors import CustomWav2Vec2Processor
 from models import Wav2Vec2ClassificationModel
 
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
