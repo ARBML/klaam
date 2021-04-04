@@ -35,6 +35,7 @@ class Wav2Vec2ClassificationModel(Wav2Vec2PreTrainedModel):
         
         outputs = self.wav2vec2(
             input_values,
+            attention_mask=attention_mask,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
             return_dict=return_dict,
