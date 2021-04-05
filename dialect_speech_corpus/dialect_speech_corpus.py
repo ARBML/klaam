@@ -82,6 +82,7 @@ class DialectSpeechCorpus(datasets.GeneratorBasedBuilder):
         return [
             datasets.SplitGenerator(name="train", gen_kwargs={"archive_path": os.path.join(archive_path, "train")}),
             datasets.SplitGenerator(name="dev", gen_kwargs={"archive_path": os.path.join(archive_path, "dev")}),
+            datasets.SplitGenerator(name="test", gen_kwargs={"archive_path": os.path.join(archive_path, "test")}),
         ]
 
     def _generate_examples(self, archive_path):
@@ -93,7 +94,7 @@ class DialectSpeechCorpus(datasets.GeneratorBasedBuilder):
 
         for _, c in enumerate(os.listdir(wav_dir)):
             if os.path.isdir(f'{wav_dir}/{c}/'):
-                for file in os.listdir(f'{wav_dir}/{c}/'):
+                for file in os.listdir(f'{wav_dir}/{c}/')[:2200]:
                     if file.endswith('.wav'):
                         wav_path = f'{wav_dir}/{c}/{file}'
                         paths.append(wav_path)
