@@ -12,23 +12,25 @@ def load_file_to_data(file, srate = 16_000):
 
 def predict(data, model, processor, mode = 'rec', bw = False):
     if mode == 'rec':
-        features = processor(data["speech"],
+        max_length = 128000
+        features = processor(data["speech"][:max_length],
                             sampling_rate=data["sampling_rate"],
                             padding=True,
-                            max_length=128000, 
-                            pad_to_multiple_of=128000,
+                            max_length=max_length, 
+                            pad_to_multiple_of=max_length,
                             return_tensors="pt")
+        
     else:
-        features = processor(data["speech"], 
+        max_length = 320000
+        features = processor(data["speech"][:max_length], 
                         sampling_rate=data["sampling_rate"],
-                        max_length=320000,
-                        pad_to_multiple_of=320000,
+                        max_length=max_length,
+                        pad_to_multiple_of=max_length,
                         padding=True, return_tensors="pt")
-    
     input_values = features.input_values.to("cuda")
-    # attention_mask = features.attention_mask.to("cuda")
+    attention_mask = features.attention_mask.to("cuda")
     with torch.no_grad():
-        outputs = model(input_values)
+        outputs = model(input_values, attention_mask = attention_mask)
     
     if mode == 'rec':
         pred_ids = torch.argmax(outputs.logits, dim=-1)
