@@ -13,6 +13,8 @@ import torch
 import torchaudio
 from packaging import version
 from torch import nn
+import soundfile as sf
+import librosa
 
 import transformers
 from transformers import (
@@ -107,7 +109,7 @@ class DataTrainingArguments:
         default=None, metadata={"help": "The configuration name of the dataset to use (via the datasets library)."}
     )
     train_split_name: Optional[str] = field(
-        default="train+validation",
+        default="train+dev",
         metadata={
             "help": "The name of the training data set split to use (via the datasets library). Defaults to 'train'"
         },
@@ -305,11 +307,20 @@ def main():
     set_seed(training_args.seed)
 
     # Get the datasets:
-    train_dataset = datasets.load_dataset("egy_speech_corpus", split='train', cache_dir=model_args.cache_dir)
-    eval_dataset = datasets.load_dataset("egy_speech_corpus", split="dev", cache_dir=model_args.cache_dir)
+    train_dataset = datasets.load_dataset(data_args.dataset_config_name, split=data_args.train_split_name, cache_dir=model_args.cache_dir)
+    eval_dataset = datasets.load_dataset(data_args.dataset_config_name, split="test", cache_dir=model_args.cache_dir)
+
+    #train_dataset = datasets.load_dataset("common_voice", "tr", split="train+validation")
+    #eval_dataset = datasets.load_dataset("common_voice", "tr", split="test")
+
+    #print(train_dataset)
+    print(eval_dataset['path'][:5])
+    print(eval_dataset['sentence'][:5])
+    print(eval_dataset['segment'][:5])
 
     # Create and save tokenizer
     chars_to_ignore_regex = f'[{"".join(data_args.chars_to_ignore)}]'
+    print('Characters to ignore:', chars_to_ignore_regex)
 
     def remove_special_characters(batch):
         batch["text"] = re.sub(chars_to_ignore_regex, "", batch["sentence"]).lower() + " "
@@ -353,6 +364,7 @@ def main():
     # Distributed training:
     # The .from_pretrained methods guarantee that only one local process can concurrently
     # download model & vocab.
+
     tokenizer = Wav2Vec2CTCTokenizer(
         "vocab.json",
         unk_token="[UNK]",
@@ -384,13 +396,17 @@ def main():
     if data_args.max_val_samples is not None:
         eval_dataset = eval_dataset.select(range(data_args.max_val_samples))
 
-    resampler = torchaudio.transforms.Resample(48_000, 16_000)
-
     # Preprocessing the datasets.
-    # We need to read the aduio files as arrays and tokenize the targets.
+    # We need to read the audio files as arrays and tokenize the targets.
     def speech_file_to_array_fn(batch):
+        start, stop = batch['segment'].split('_')
         speech_array, sampling_rate = torchaudio.load(batch["path"])
-        batch["speech"] = resampler(speech_array).squeeze().numpy()
+        #resampler = torchaudio.transforms.Resample(sampling_rate, 16_000)
+        #batch["speech"] = resampler(speech_array).squeeze().numpy()
+        speech_array, sampling_rate = sf.read(batch["path"], start=int(float(start) * sampling_rate),
+                                              stop=int(float(stop) * sampling_rate))
+        #print('>>', sampling_rate)
+        batch["speech"] = librosa.resample(speech_array, sampling_rate, 16_000)
         batch["sampling_rate"] = 16_000
         batch["target_text"] = batch["text"]
         return batch
@@ -400,6 +416,8 @@ def main():
         remove_columns=train_dataset.column_names,
         num_proc=data_args.preprocessing_num_workers,
     )
+
+
     eval_dataset = eval_dataset.map(
         speech_file_to_array_fn,
         remove_columns=eval_dataset.column_names,
