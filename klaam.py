@@ -34,5 +34,6 @@ class SpeechClassification:
         self.model = Wav2Vec2ClassificationModel.from_pretrained(dir).to("cuda")
         self.processor = CustomWav2Vec2Processor.from_pretrained(dir)
     
-    def classify(self, wav_file):
-        return predict(load_file_to_data(wav_file), self.model, self.processor, mode = 'cls')
+    def classify(self, wav_file, return_prob = False):
+        return predict(load_file_to_data(wav_file), 
+                    self.model, self.processor, mode = 'cls', return_prob = return_prob)

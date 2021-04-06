@@ -10,7 +10,8 @@ def load_file_to_data(file, srate = 16_000):
     return batch
 
 
-def predict(data, model, processor, mode = 'rec', bw = False):
+def predict(data, model, processor, mode = 'rec', 
+            bw = False, return_prob = False):
     if mode == 'rec':
         max_length = 128000
         features = processor(data["speech"][:max_length],
@@ -33,6 +34,8 @@ def predict(data, model, processor, mode = 'rec', bw = False):
         outputs = model(input_values, attention_mask = attention_mask)
     
     if mode == 'rec':
+        if return_prob:
+            raise('This parameter works for classification')
         pred_ids = torch.argmax(outputs.logits, dim=-1)
         text =  processor.batch_decode(pred_ids)[0]
 
@@ -40,6 +43,13 @@ def predict(data, model, processor, mode = 'rec', bw = False):
             text = buckwalter.untrans(text)
         return text 
     else:
-        pred_ids = torch.argmax(outputs['logits'], dim=-1)[0]
         dialects = ['EGY','NOR','GLF','LAV','MSA']
-        return dialects[pred_ids]
+        
+        if not return_prob:
+            pred_ids = torch.argmax(outputs['logits'], dim=-1)
+            return dialects[pred_ids[0]]
+        else:
+            softmax = torch.nn.Softmax()
+            probs = softmax(outputs['logits'])
+            top_prob, top_lbls = torch.topk(probs[0], 5) 
+            return {dialects[top_lbls[lbl]]:format(float(top_prob[lbl]),'.2f') for lbl in range(5)}
