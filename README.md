@@ -63,7 +63,7 @@ We currently support three models, all of them are avilable on transformers.
 
   <tr>
     <td class="tg-yw4l">Demo with mic</td>
-    <td class="tg-yw4l">Audio Recongition with recording.</td>
+    <td class="tg-yw4l">Audio Recongition and classification with recording.</td>
     <td class="tg-yw4l"><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/demo_with_mic.ipynb">
     <img src="https://colab.research.google.com/assets/colab-badge.svg"  >
     </a></td>
