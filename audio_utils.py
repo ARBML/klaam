@@ -126,5 +126,3 @@ def get_audio():
   # save
   human_sound_file = "demo.wav"
   write_wav(human_sound_file, sr, audio)
-
-  return human_sound_file
