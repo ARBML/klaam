@@ -49,7 +49,7 @@ def predict(data, model, processor, mode = 'rec',
             pred_ids = torch.argmax(outputs['logits'], dim=-1)
             return dialects[pred_ids[0]]
         else:
-            softmax = torch.nn.Softmax(dim = -1))
+            softmax = torch.nn.Softmax(dim = -1)
             probs = softmax(outputs['logits'])
             top_prob, top_lbls = torch.topk(probs[0], 5) 
             return {dialects[top_lbls[lbl]]:format(float(top_prob[lbl]),'.2f') for lbl in range(5)}
