@@ -6,13 +6,14 @@ import re
 import sys
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
-
+import soundfile as sf
 import datasets
 import numpy as np
 import torch
 import torchaudio
 from packaging import version
 from torch import nn
+import librosa
 
 import transformers
 from transformers import (
@@ -400,6 +401,7 @@ def main():
         batch["target_text"] = batch["text"]
         return batch
 
+    
     train_dataset = train_dataset.map(
         speech_file_to_array_fn,
         remove_columns=train_dataset.column_names,
@@ -410,6 +412,15 @@ def main():
         remove_columns=eval_dataset.column_names,
         num_proc=data_args.preprocessing_num_workers,
     )
+
+
+    def resample(batch):
+        batch["speech"] = librosa.resample(np.asarray(batch["speech"]), 48_000, 16_000)
+        batch["sampling_rate"] = 16_000
+        return batch
+
+    train_dataset = common_voice_train.map(resample, num_proc=data_args.preprocessing_num_workers)
+    eval_dataset = common_voice_test.map(resample, num_proc=data_args.preprocessing_num_workers)
 
     def prepare_dataset(batch):
         # check that all files have the correct sampling rate
