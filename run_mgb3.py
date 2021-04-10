@@ -311,8 +311,11 @@ def main():
     # Create and save tokenizer
     chars_to_ignore_regex = f'[{"".join(data_args.chars_to_ignore)}]'
 
+
     def remove_special_characters(batch):
-        batch["text"] = re.sub(chars_to_ignore_regex, "", batch["sentence"]).lower() + " "
+        batch["text"] = re.sub(chars_to_ignore_regex, '', batch["text"]).lower() + " "
+        batch["text"] = re.sub('[a-zA-z]', '', batch["text"]).lower() + " "
+        batch["text"] = re.sub('[ًٌٍَُِ~]', '', batch["text"]).lower() + " "
         return batch
 
     train_dataset = train_dataset.map(remove_special_characters, remove_columns=["sentence"])
