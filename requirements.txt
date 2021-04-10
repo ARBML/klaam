@@ -3,3 +3,4 @@ librosa
 jiwer
 ffmpeg-python
 transformers
+datasets
