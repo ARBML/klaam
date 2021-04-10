@@ -100,7 +100,7 @@ python run_classifier.py \
 This script is for training on the dataset for pretraining on the egyption dialects dataset. 
 
 ```
-python run_recognition.py \
+python run_mgb3.py \
     --model_name_or_path="facebook/wav2vec2-large-xlsr-53" \
     --output_dir=/path/to/output \
     --cache_dir=/path/to/cache/ \

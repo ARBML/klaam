@@ -389,9 +389,11 @@ def main():
     # Preprocessing the datasets.
     # We need to read the aduio files as arrays and tokenize the targets.
     def speech_file_to_array_fn(batch):
-        speech_array, sampling_rate = torchaudio.load(batch["path"])
-        batch["speech"] = resampler(speech_array).squeeze().numpy()
-        batch["sampling_rate"] = 16_000
+        srate = 44100
+        start, stop = batch['segment'].split('_')
+        speech_array, sampling_rate = sf.read(batch["file"], start = int(float(start)*srate), stop = int(float(stop)*srate))
+        batch["speech"] = speech_array
+        batch["sampling_rate"] = srate
         batch["target_text"] = batch["text"]
         return batch
 
