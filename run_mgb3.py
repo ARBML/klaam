@@ -318,8 +318,8 @@ def main():
         batch["text"] = re.sub('[ًٌٍَُِ~]', '', batch["text"]).lower() + " "
         return batch
 
-    train_dataset = train_dataset.map(remove_special_characters, remove_columns=["sentence"])
-    eval_dataset = eval_dataset.map(remove_special_characters, remove_columns=["sentence"])
+    train_dataset = train_dataset.map(remove_special_characters)
+    eval_dataset = eval_dataset.map(remove_special_characters)
 
     def extract_all_chars(batch):
         all_text = " ".join(batch["text"])
