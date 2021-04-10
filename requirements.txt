@@ -4,3 +4,4 @@ jiwer
 ffmpeg-python
 transformers
 datasets
+torchaudio

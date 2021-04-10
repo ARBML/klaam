@@ -10,7 +10,6 @@ import soundfile as sf
 import datasets
 import numpy as np
 import torch
-import torchaudio
 from packaging import version
 from torch import nn
 import librosa
@@ -388,7 +387,6 @@ def main():
     if data_args.max_val_samples is not None:
         eval_dataset = eval_dataset.select(range(data_args.max_val_samples))
 
-    resampler = torchaudio.transforms.Resample(48_000, 16_000)
 
     # Preprocessing the datasets.
     # We need to read the aduio files as arrays and tokenize the targets.
