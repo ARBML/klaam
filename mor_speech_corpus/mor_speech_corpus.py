@@ -69,7 +69,7 @@ class MorrocanSpeechCorpus(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager):
         self.archive_path = '/content/MGB5 Moroccan'
         return [
-            datasets.SplitGenerator(name="train", gen_kwargs={"archive_path": os.path.join(self.archive_path, "adapt")}),
+            datasets.SplitGenerator(name="train", gen_kwargs={"archive_path": os.path.join(self.archive_path, "train")}),
             datasets.SplitGenerator(name="dev", gen_kwargs={"archive_path": os.path.join(self.archive_path, "dev")}),
             datasets.SplitGenerator(name="test", gen_kwargs={"archive_path": os.path.join(self.archive_path, "test")}),
         ]
@@ -77,7 +77,7 @@ class MorrocanSpeechCorpus(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, archive_path):
         """Generate examples from a Librispeech archive_path."""
         text_dir = os.path.join(archive_path, "all_files")
-        wav_dir = os.path.join(self.archive_path, "wav")
+        wav_dir = os.path.join(archive_path, "wav")
         
         for text_file in os.listdir(text_dir):
             if text_file.endswith('.txt'):

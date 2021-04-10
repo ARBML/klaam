@@ -305,8 +305,8 @@ def main():
     set_seed(training_args.seed)
 
     # Get the datasets:
-    train_dataset = datasets.load_dataset("egy_speech_corpus", split='train', cache_dir=model_args.cache_dir)
-    eval_dataset = datasets.load_dataset("egy_speech_corpus", split="dev", cache_dir=model_args.cache_dir)
+    train_dataset = datasets.load_dataset("mor_speech_corpus", split='train', cache_dir=model_args.cache_dir)
+    eval_dataset = datasets.load_dataset("mor_speech_corpus", split="dev", cache_dir=model_args.cache_dir)
 
     # Create and save tokenizer
     chars_to_ignore_regex = f'[{"".join(data_args.chars_to_ignore)}]'
@@ -391,7 +391,7 @@ def main():
     # Preprocessing the datasets.
     # We need to read the aduio files as arrays and tokenize the targets.
     def speech_file_to_array_fn(batch):
-        srate = 44100
+        srate = 16000
         start, stop = batch['segment'].split('_')
         speech_array, sampling_rate = sf.read(batch["file"], start = int(float(start)*srate), stop = int(float(stop)*srate))
         batch["speech"] = speech_array
