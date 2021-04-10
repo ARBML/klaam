@@ -379,6 +379,7 @@ def main():
         ctc_loss_reduction="mean",
         pad_token_id=processor.tokenizer.pad_token_id,
         vocab_size=len(processor.tokenizer),
+        ctc_zero_infinity=True,
     )
 
     if data_args.max_train_samples is not None:
