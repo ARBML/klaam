@@ -419,8 +419,8 @@ def main():
         batch["sampling_rate"] = 16_000
         return batch
 
-    train_dataset = common_voice_train.map(resample, num_proc=data_args.preprocessing_num_workers)
-    eval_dataset = common_voice_test.map(resample, num_proc=data_args.preprocessing_num_workers)
+    train_dataset = train_dataset.map(resample, num_proc=data_args.preprocessing_num_workers)
+    eval_dataset = eval_dataset.map(resample, num_proc=data_args.preprocessing_num_workers)
 
     def prepare_dataset(batch):
         # check that all files have the correct sampling rate
