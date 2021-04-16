@@ -5,3 +5,5 @@ ffmpeg-python
 transformers
 datasets
 torchaudio
+arabic_pronounce
+pypinyin
