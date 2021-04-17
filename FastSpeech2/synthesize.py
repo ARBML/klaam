@@ -2,14 +2,12 @@ import re
 import argparse
 from string import punctuation
 from arabic_pronounce import phonetise
-from lang_trans.arabic import buckwalter
 import torch
 import yaml
 import numpy as np
 from torch.utils.data import DataLoader
-from g2p_en import G2p
 from pypinyin import pinyin, Style
-
+from .buckwalter import ar2bw, bw2ar
 from utils.model import get_model, get_vocoder
 from utils.tools import to_device, synth_samples
 from dataset import TextDataset
@@ -18,51 +16,13 @@ from text import text_to_sequence
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def read_lexicon(lex_path):
-    lexicon = {}
-    with open(lex_path) as f:
-        for line in f:
-            temp = re.split(r"\s+", line.strip("\n"))
-            word = temp[0]
-            phones = temp[1:]
-            if word.lower() not in lexicon:
-                lexicon[word.lower()] = phones
-    return lexicon
 
-
-def preprocess_english(text, preprocess_config):
-    text = text.rstrip(punctuation)
-    print(text)
-    lexicon = read_lexicon(preprocess_config["path"]["lexicon_path"])
-
-    g2p = G2p()
-    phones = []
-    words = re.split(r"([,;.\-\?\!\s+])", text)
-    for w in words:
-        if w.lower() in lexicon:
-            phones += lexicon[w.lower()]
-        else:
-            phones += list(filter(lambda p: p != " ", g2p(w)))
-
-    phones = "{" + "}{".join(phones) + "}"
-    phones = re.sub(r"\{[^\w\s]?\}", "{sp}", phones)
-    phones = phones.replace("}{", " ")
-
-    print("Raw Text Sequence: {}".format(text))
-    print("Phoneme Sequence: {}".format(phones))
-    sequence = np.array(
-        text_to_sequence(
-            phones, preprocess_config["preprocessing"]["text"]["text_cleaners"]
-        )
-    )
-
-    return np.array(sequence)
 
 def preprocess_arabic(text, preprocess_config, bw = False):
 
     text = text.rstrip(punctuation)
     if bw:
-        text = buckwalter.untrans(text)
+        text = "".join([bw2ar[l] if l in bw2ar else l for l in text])
     phones = ''
     for word in text.split(' '):
         if word in punctuation:

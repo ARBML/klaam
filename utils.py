@@ -1,6 +1,6 @@
 import torch
 import librosa    
-from lang_trans.arabic import buckwalter
+from FastSpeech2.buckwalter import ar2bw, bw2ar
 
 def load_file_to_data(file, srate = 16_000):
     batch = {} 
@@ -40,7 +40,7 @@ def predict(data, model, processor, mode = 'rec',
         text =  processor.batch_decode(pred_ids)[0]
 
         if bw:
-            text = buckwalter.untrans(text)
+            text = "".join([bw2ar[l] if l in bw2ar else l for l in text])
         return text 
     else:
         dialects = ['EGY','NOR','GLF','LAV','MSA']
