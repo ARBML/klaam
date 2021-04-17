@@ -44,5 +44,5 @@ class TextToSpeech:
     def __init__(self):
         self.model, self.vocoder, self.configs = prepare_tts_model()
     
-    def synthesize(self, text):
-        infer_tts(text, self.model, self.vocoder, self.configs)
+    def synthesize(self, text, bw = False):
+        infer_tts(text, self.model, self.vocoder, self.configs, bw = bw)
