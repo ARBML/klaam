@@ -8,4 +8,4 @@ torchaudio
 arabic_pronounce
 pypinyin
 Unidecode
-PyYAML
+PyYAML==5.1
