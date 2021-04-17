@@ -2,13 +2,12 @@ import re
 import argparse
 from string import punctuation
 from arabic_pronounce import phonetise
-from lang_trans.arabic import buckwalter
 import torch
 import yaml
 import numpy as np
 from torch.utils.data import DataLoader
 from pypinyin import pinyin, Style
-
+from buckwalter import ar2bw, bw2ar
 from .utils.model import get_model_inference, get_vocoder
 from .utils.tools import to_device, synth_samples
 from .dataset import TextDataset
@@ -22,7 +21,7 @@ def preprocess_arabic(text, preprocess_config, bw = False):
 
     text = text.rstrip(punctuation)
     if bw:
-        text = buckwalter.untrans(text)
+        text = "".join([bw2ar[l] if l in bw2ar else l for l in text])
     phones = ''
     for word in text.split(' '):
         if word in punctuation:

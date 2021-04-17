@@ -1,4 +1,3 @@
-lang-trans
 librosa
 jiwer
 ffmpeg-python
