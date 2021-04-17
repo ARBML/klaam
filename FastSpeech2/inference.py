@@ -7,7 +7,7 @@ import yaml
 import numpy as np
 from torch.utils.data import DataLoader
 from pypinyin import pinyin, Style
-from buckwalter import ar2bw, bw2ar
+from .buckwalter import ar2bw, bw2ar
 from .utils.model import get_model_inference, get_vocoder
 from .utils.tools import to_device, synth_samples
 from .dataset import TextDataset
@@ -19,18 +19,16 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def preprocess_arabic(text, preprocess_config, bw = False):
 
-    text = text.rstrip(punctuation)
     if bw:
         text = "".join([bw2ar[l] if l in bw2ar else l for l in text])
-    phones = ''
+    phones = []
     for word in text.split(' '):
         if word in punctuation:
-          pass 
+          phones += ['sil'] 
         elif len(word.strip()) > 0:
-          phones+=phonetise(word)[0]
+          phones+=(phonetise(word)[0]).split(' ')
         
-    phones = "{" + "}{".join(phones.split(' ')) + "}"
-    phones = phones.replace("}{", " ")
+    phones = "{" + " ".join(phones).strip() + "}"
 
     print("Raw Text Sequence: {}".format(text))
     print("Phoneme Sequence: {}".format(phones))
