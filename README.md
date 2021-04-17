@@ -1,5 +1,5 @@
 # klaam
-Arabic speech recognition and classification using wav2vec models. This repository allows training and prediction using pretrained models. 
+Arabic speech recognition, classification and text-to-speech using many advanced models like wave2vec and fastspeech2. This repository allows training and prediction using pretrained models. 
 
  <p align="center"> 
  <img src = "https://raw.githubusercontent.com/ARBML/klaam/main/klaam_logo.PNG" width = "250px"/>
@@ -11,11 +11,15 @@ Arabic speech recognition and classification using wav2vec models. This reposito
  ```python
  from klaam import SpeechClassification
  model = SpeechClassification()
- model.classify('file.wav')
+ model.classify(wav_file)
  
  from klaam import SpeechRecognition
  model = SpeechRecognition()
- model.transcribe('file.wav')
+ model.transcribe(wav_file)
+
+ from klaam import TextToSpeech
+ model = TextToSpeech()
+ model.synthesize(sample_text)
  ```
 
  There are two avilable models for recognition trageting MSA and egyptian dialect . You can set any of them using the `lang` attribute
@@ -33,16 +37,18 @@ Arabic speech recognition and classification using wav2vec models. This reposito
 | MGB-3  | Egyptian Arabic Speech recognition in the wild. Every sentence was annotated by four annotators. More than 15 hours have been collected from YouTube.  |  requires registeration [here](https://arabicspeech.org/mgb3-asr/)|
 | ADI-5  | More than 50 hours collected from Aljazeera TV.  4 regional dialectal: Egyptian (EGY), Levantine (LAV), Gulf (GLF), North African (NOR), and Modern Standard Arabic (MSA). This dataset is a part of the MGB-3 challenge.  | requires registeration [here](https://arabicspeech.org/mgb3-adi/)|
 |Common voice | Multlilingual dataset avilable on huggingface | [here](https://github.com/huggingface/datasets/tree/master/datasets/common_voice). |
+|Arabic Speech Corpus | Arabic dataset with alignment and transcriptions | [here](http://en.arabicspeechcorpus.com/). |
 
 ## Models 
 
-We currently support three models, all of them are avilable on transformers. 
+We currently support four models, three of them are avilable on transformers. 
 
 |Language | Description | Source |
 |-------- | ----------- | ------ |
 |Egyptian | Speech recognition | [wav2vec2-large-xlsr-53-arabic-egyptian](https://huggingface.co/Zaid/wav2vec2-large-xlsr-53-arabic-egyptian)|
 |Standard Arabic | Speech recognition | [wav2vec2-large-xlsr-53-arabic](https://huggingface.co/elgeish/wav2vec2-large-xlsr-53-arabic)
 |EGY, NOR, LAV, GLF, MSA | Speech classification | [wav2vec2-large-xlsr-dialect-classification](https://huggingface.co/Zaid/wav2vec2-large-xlsr-dialect-classification)|
+|Standard Arabic| Text-to-Speech | [fastspeech2]()|
 
 ## Example Notebooks 
 <table class="tg">
@@ -55,7 +61,7 @@ We currently support three models, all of them are avilable on transformers.
 
   <tr>
     <td class="tg-yw4l">Demo</td>
-    <td class="tg-yw4l">Classification and Recongition example  in a few lines of code.</td>
+    <td class="tg-yw4l">Classification, Recongition and Text-to-speech  in a few lines of code.</td>
     <td class="tg-yw4l"><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/demo.ipynb">
     <img src="https://colab.research.google.com/assets/colab-badge.svg"  >
     </a></td>
