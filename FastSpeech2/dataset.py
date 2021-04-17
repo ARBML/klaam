@@ -5,8 +5,8 @@ import os
 import numpy as np
 from torch.utils.data import Dataset
 
-from text import text_to_sequence
-from utils.tools import pad_1D, pad_2D
+from .text import text_to_sequence
+from .utils.tools import pad_1D, pad_2D
 
 
 class Dataset(Dataset):

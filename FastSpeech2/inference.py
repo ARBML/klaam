@@ -9,10 +9,10 @@ import numpy as np
 from torch.utils.data import DataLoader
 from pypinyin import pinyin, Style
 
-from utils.model import get_model_inference, get_vocoder
-from utils.tools import to_device, synth_samples
-from dataset import TextDataset
-from text import text_to_sequence
+from .utils.model import get_model_inference, get_vocoder
+from .utils.tools import to_device, synth_samples
+from .dataset import TextDataset
+from .text import text_to_sequence
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -71,10 +71,10 @@ def synthesize(model, step, configs, vocoder, batchs, control_values):
 def prepare_tts_model():
     # Read Config
     preprocess_config = yaml.load(
-        open("config/Arabic/preprocess.yaml", "r"), Loader=yaml.FullLoader
+        open("FastSpeech2/config/Arabic/preprocess.yaml", "r"), Loader=yaml.FullLoader
     )
-    model_config = yaml.load(open('config/Arabic/model.yaml', "r"), Loader=yaml.FullLoader)
-    train_config = yaml.load(open('config/Arabic/train.yaml', "r"), Loader=yaml.FullLoader)
+    model_config = yaml.load(open('FastSpeech2/config/Arabic/model.yaml', "r"), Loader=yaml.FullLoader)
+    train_config = yaml.load(open('FastSpeech2/config/Arabic/train.yaml', "r"), Loader=yaml.FullLoader)
     configs = (preprocess_config, model_config, train_config)
 
     # Get model

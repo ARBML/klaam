@@ -5,9 +5,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from transformer import Encoder, Decoder, PostNet
+from ..transformer import Encoder, Decoder, PostNet
 from .modules import VarianceAdaptor
-from utils.tools import get_mask_from_lengths
+from ..utils.tools import get_mask_from_lengths
 
 
 class FastSpeech2(nn.Module):
