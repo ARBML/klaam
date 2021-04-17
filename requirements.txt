@@ -7,3 +7,4 @@ datasets
 torchaudio
 arabic_pronounce
 pypinyin
+Unidecode
