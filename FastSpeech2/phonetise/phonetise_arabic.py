@@ -5,7 +5,8 @@ import sys
 import codecs
 import re
 import os
-from .findstress import *
+from .find_stress import *
+
 
 buckwalter = { #mapping from Arabic script to Buckwalter
 	u'\u0628': u'b' , u'\u0630': u'*' , u'\u0637': u'T' , u'\u0645': u'm',

@@ -1,7 +1,7 @@
 import re
 import argparse
 from string import punctuation
-from .phonetise import phonetise
+from .phonetise.phonetise_arabic import phonetise
 import torch
 import yaml
 import numpy as np
