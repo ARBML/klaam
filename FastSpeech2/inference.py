@@ -1,7 +1,7 @@
 import re
 import argparse
 from string import punctuation
-from arabic_pronounce import phonetise
+from .phonetise import phonetise
 import torch
 import yaml
 import numpy as np
@@ -21,14 +21,8 @@ def preprocess_arabic(text, preprocess_config, bw = False):
 
     if bw:
         text = "".join([bw2ar[l] if l in bw2ar else l for l in text])
-    phones = []
-    for word in text.split(' '):
-        if word in punctuation:
-          phones += ['sil'] 
-        elif len(word.strip()) > 0:
-          phones+=(phonetise(word)[0]).split(' ')
-        
-    phones = "{" + " ".join(phones).strip() + "}"
+    phones = phonetise(text)[0]   
+    phones = "{" + phones + "}"
 
     print("Raw Text Sequence: {}".format(text))
     print("Phoneme Sequence: {}".format(phones))
