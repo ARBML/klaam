@@ -153,4 +153,71 @@ python run_common_voice.py \
     --max_train_samples 100 --max_val_samples 100
 ```
 
+### Text To Speech 
+
+We use the pytorch implementation of fastspeech2 by [https://github.com/ming024/FastSpeech2](ming024). The procedure is as follows 
+
+Download the dataset 
+
+```
+wget http://en.arabicspeechcorpus.com/arabic-speech-corpus.zip 
+unzip arabic-speech-corpus.zip 
+```
+
+Create multiple directories for data 
+
+```
+mkdir raw_data 
+mkdir raw_data/Arabic/
+mkdir raw_data/Arabic/Arabic
+
+mkdir preprocessed_data
+mkdir preprocessed_data/Arabic
+mkdir preprocessed_data/Arabic/TextGrid
+mkdir preprocessed_data/Arabic/TextGrid/Arabic
+
+cp arabic-speech-corpus/textgrid/* preprocessed_data/Arabic/TextGrid/Arabic
+```
+
+Prepare metadata 
+
+```python
+import os 
+base_dir = '/content/arabic-speech-corpus'
+lines = []
+for lab_file in os.listdir(f'{base_dir}/lab'):
+  lines.append(lab_file[:-4]+'|'+open(f'{base_dir}/lab/{lab_file}', 'r').read())
+
+
+open(f'{base_dir}/metadata.csv', 'w').write(('\n').join(lines))
+```
+
+Clone my fork 
+
+```bash
+git clone https://github.com/zaidalyafeai/FastSpeech2
+cd FastSpeech2
+pip install -r requirements.txt
+```
+
+Prepare alignments and prepreocessed data 
+
+```
+python3 prepare_align.py config/Arabic/preprocess.yaml
+python3 preprocess.py config/Arabic/preprocess.yaml
+```
+
+Unzip vocoders 
+
+```
+unzip hifigan/generator_LJSpeech.pth.tar.zip -d hifigan
+unzip hifigan/generator_universal.pth.tar.zip -d hifigan
+```
+
+Start training 
+
+```
+python3 train.py -p config/Arabic/preprocess.yaml -m config/Arabic/model.yaml -t config/Arabic/train.yaml
+```
+
 
