@@ -26,7 +26,7 @@ def preprocess_arabic(text, preprocess_config, bw = False, ts = False):
     
     if ts:
         vocalizer = mishkal.tashkeel.TashkeelClass()
-        vocalizer.tashkeel(text)
+        text = vocalizer.tashkeel(text)
 
     phones = phonetise(text)[0]   
     phones = "{" + phones + "}"
