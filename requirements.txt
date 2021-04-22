@@ -8,3 +8,5 @@ arabic_pronounce
 pypinyin
 Unidecode
 PyYAML==5.1
+codernitydb3
+mishkal

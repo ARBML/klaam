@@ -12,15 +12,22 @@ from .utils.model import get_model_inference, get_vocoder
 from .utils.tools import to_device, synth_samples
 from .dataset import TextDataset
 from .text import text_to_sequence
+import mishkal.tashkeel
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 
-def preprocess_arabic(text, preprocess_config, bw = False):
+def preprocess_arabic(text, preprocess_config, bw = False, ts = False):
 
     if bw:
         text = "".join([bw2ar[l] if l in bw2ar else l for l in text])
+    
+    if ts:
+        vocalizer = mishkal.tashkeel.TashkeelClass()
+        vocalizer.tashkeel(text)
+
     phones = phonetise(text)[0]   
     phones = "{" + phones + "}"
 
@@ -76,12 +83,13 @@ def prepare_tts_model():
     return model, vocoder, configs
 
 
-def infer_tts(text, model, vocoder, configs, bw = True, pitch_control = 1.0, energy_control = 1.0, duration_control = 1.0):
+def infer_tts(text, model, vocoder, configs, bw = True, apply_tshkeel = False, 
+             pitch_control = 1.0, energy_control = 1.0, duration_control = 1.0):
     control_values = pitch_control, energy_control, duration_control
     (preprocess_config, _, _) = configs 
     ids = raw_texts = [text[:100]]
     speakers = np.array([0])
-    texts = np.array([preprocess_arabic(text, preprocess_config, bw = bw)])
+    texts = np.array([preprocess_arabic(text, preprocess_config, bw = bw, ts = apply_tshkeel)])
     text_lens = np.array([len(texts[0])])
     batchs = [(ids, raw_texts, speakers, texts, text_lens, max(text_lens))]
     synthesize(model, '', configs, vocoder, batchs, control_values)
