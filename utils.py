@@ -29,7 +29,10 @@ def predict(data, model, processor, mode = 'rec',
                         pad_to_multiple_of=max_length,
                         padding=True, return_tensors="pt")
     input_values = features.input_values.to("cuda")
-    attention_mask = features.attention_mask.to("cuda")
+    try:
+        attention_mask = features.attention_mask.to("cuda")
+    except:
+        attention_mask = None 
     with torch.no_grad():
         outputs = model(input_values, attention_mask = attention_mask)
     
