@@ -2,6 +2,8 @@ import torch
 import librosa    
 from FastSpeech2.buckwalter import ar2bw, bw2ar
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 def load_file_to_data(file, srate = 16_000):
     batch = {} 
     speech, sampling_rate = librosa.load(file, sr=srate)
@@ -28,9 +30,9 @@ def predict(data, model, processor, mode = 'rec',
                         max_length=max_length,
                         pad_to_multiple_of=max_length,
                         padding=True, return_tensors="pt")
-    input_values = features.input_values.to("cuda")
+    input_values = features.input_values.to(device)
     try:
-        attention_mask = features.attention_mask.to("cuda")
+        attention_mask = features.attention_mask.to(device)
     except:
         attention_mask = None 
     with torch.no_grad():

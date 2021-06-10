@@ -3,6 +3,9 @@ from utils import load_file_to_data, predict
 from models import Wav2Vec2ClassificationModel
 from processors import CustomWav2Vec2Processor
 from FastSpeech2.inference import prepare_tts_model, infer_tts
+import torch
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class SpeechRecognition:
 
@@ -17,7 +20,7 @@ class SpeechRecognition:
                 self.bw = True
         else:
             model_dir = path
-        self.model = Wav2Vec2ForCTC.from_pretrained(model_dir).to("cuda")
+        self.model = Wav2Vec2ForCTC.from_pretrained(model_dir).to(device)
         self.processor = Wav2Vec2Processor.from_pretrained(model_dir)
     
     def transcribe(self, wav_file):
@@ -32,7 +35,7 @@ class SpeechClassification:
             dir = 'Zaid/wav2vec2-large-xlsr-dialect-classification'
         else:
             dir = path
-        self.model = Wav2Vec2ClassificationModel.from_pretrained(dir).to("cuda")
+        self.model = Wav2Vec2ClassificationModel.from_pretrained(dir).to(device)
         self.processor = CustomWav2Vec2Processor.from_pretrained(dir)
     
     def classify(self, wav_file, return_prob = False):
