@@ -2,7 +2,7 @@
 Arabic speech recognition, classification and text-to-speech using many advanced models like wave2vec and fastspeech2. This repository allows training and prediction using pretrained models. 
 
  <p align="center"> 
- <img src = "https://raw.githubusercontent.com/ARBML/klaam/main/klaam_logo.PNG" width = "250px"/>
+ <img src="https://raw.githubusercontent.com/ARBML/klaam/main/klaam_logo.PNG" width="250px"/>
  </p>
  
  
@@ -51,37 +51,38 @@ We currently support four models, three of them are avilable on transformers.
 |Standard Arabic| Text-to-Speech | [fastspeech2]()|
 
 ## Example Notebooks 
-<table class="tg">
-
+<table>
   <tr>
-    <th class="tg-yw4l"><b>Name</b></th>
-    <th class="tg-yw4l"><b>Description</b></th>
-    <th class="tg-yw4l"><b>Notebook</b></th>
+    <th><b>Name</b></th>
+    <th><b>Description</b></th>
+    <th><b>Notebook</b></th>
   </tr>
 
   <tr>
-    <td class="tg-yw4l">Demo</td>
-    <td class="tg-yw4l">Classification, Recongition and Text-to-speech  in a few lines of code.</td>
-    <td class="tg-yw4l"><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/demo.ipynb">
+    <td>Demo</td>
+    <td>Classification, Recongition and Text-to-speech  in a few lines of code.</td>
+    <td><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/demo.ipynb">
     <img src="https://colab.research.google.com/assets/colab-badge.svg"  >
     </a></td>
   </tr>
 
   <tr>
-    <td class="tg-yw4l">Demo with mic</td>
-    <td class="tg-yw4l">Audio Recongition and classification with recording.</td>
-    <td class="tg-yw4l"><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/demo_with_mic.ipynb">
-    <img src="https://colab.research.google.com/assets/colab-badge.svg"  >
+    <td>Demo with mic</td>
+    <td>Audio Recongition and classification with recording.</td>
+    <td><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/demo_with_mic.ipynb">
+    <img src="https://colab.research.google.com/assets/colab-badge.svg">
     </a></td>
   </tr>
 <table>
 
 ## Training
 
-The scripts are a modification of this [repo](https://github.com/jqueguiner/wav2vec2-sprint). 
+The scripts are a modification of [jqueguiner/wav2vec2-sprint](https://github.com/jqueguiner/wav2vec2-sprint).
+ 
 ### classification 
 This script is used for the classification task on the 5 classes. 
-```
+
+ ```sh
 python run_classifier.py \
     --model_name_or_path="facebook/wav2vec2-large-xlsr-53" \
     --output_dir=/path/to/output \
@@ -105,7 +106,7 @@ python run_classifier.py \
 
 This script is for training on the dataset for pretraining on the egyption dialects dataset. 
 
-```
+```sh
 python run_mgb3.py \
     --model_name_or_path="facebook/wav2vec2-large-xlsr-53" \
     --output_dir=/path/to/output \
@@ -124,9 +125,10 @@ python run_mgb3.py \
     --do_eval \
     --do_train \
 ```
+ 
 This script can be used for Arabic common voice training 
 
-```
+```sh
 python run_common_voice.py \
     --model_name_or_path="facebook/wav2vec2-large-xlsr-53" \
     --dataset_config_name="ar" \
@@ -155,7 +157,7 @@ python run_common_voice.py \
 
 ### Text To Speech 
 
-We use the pytorch implementation of fastspeech2 by [https://github.com/ming024/FastSpeech2](ming024). The procedure is as follows 
+We use the pytorch implementation of fastspeech2 by [ming024](https://github.com/ming024/FastSpeech2). The procedure is as follows
 
 Download the dataset 
 
@@ -167,15 +169,7 @@ unzip arabic-speech-corpus.zip
 Create multiple directories for data 
 
 ```
-mkdir raw_data 
-mkdir raw_data/Arabic/
-mkdir raw_data/Arabic/Arabic
-
-mkdir preprocessed_data
-mkdir preprocessed_data/Arabic
-mkdir preprocessed_data/Arabic/TextGrid
-mkdir preprocessed_data/Arabic/TextGrid/Arabic
-
+mkdir -p raw_data/Arabic/Arabic preprocessed_data/Arabic/TextGrid/Arabic
 cp arabic-speech-corpus/textgrid/* preprocessed_data/Arabic/TextGrid/Arabic
 ```
 
@@ -195,7 +189,7 @@ open(f'{base_dir}/metadata.csv', 'w').write(('\n').join(lines))
 Clone my fork 
 
 ```bash
-git clone https://github.com/zaidalyafeai/FastSpeech2
+git clone --depth 1 https://github.com/zaidalyafeai/FastSpeech2
 cd FastSpeech2
 pip install -r requirements.txt
 ```
