@@ -1,37 +1,52 @@
 # klaam
 Arabic speech recognition, classification and text-to-speech using many advanced models like wave2vec and fastspeech2. This repository allows training and prediction using pretrained models. 
 
- <p align="center"> 
- <img src="https://raw.githubusercontent.com/ARBML/klaam/main/klaam_logo.PNG" width="250px"/>
- </p>
- 
- 
- ## Usage 
- 
- ```python
- from klaam import SpeechClassification
- model = SpeechClassification()
- model.classify(wav_file)
- 
- from klaam import SpeechRecognition
- model = SpeechRecognition()
- model.transcribe(wav_file)
+<p align="center"> 
+<img src="https://raw.githubusercontent.com/ARBML/klaam/main/misc/klaam_logo.png" width="250px"/>
+</p>
 
- from klaam import TextToSpeech
- model = TextToSpeech()
- model.synthesize(sample_text)
- ```
 
- There are two avilable models for recognition trageting MSA and egyptian dialect . You can set any of them using the `lang` attribute
+## Usage 
+ 
+### Speech Classification
+```python
+from klaam import SpeechClassification
+model = SpeechClassification()
+model.classify(wav_file)
+```
+
+### Speech Recongnition
+```python
+from klaam import SpeechRecognition
+model = SpeechRecognition()
+model.transcribe(wav_file)
+```
+
+
+### Text To Speech
+```python
+from klaam import TextToSpeech
+prepare_tts_model_path = "../cfgs/FastSpeech2/config/Arabic/preprocess.yaml"
+model_config_path = "../cfgs/FastSpeech2/config/Arabic/model.yaml"
+train_config_path = "../cfgs/FastSpeech2/config/Arabic/train.yaml"
+vocoder_config_path = "../cfgs/FastSpeech2/model_config/hifigan/config.json"
+speaker_pre_trained_path = "../data/model_weights/hifigan/generator_universal.pth.tar"
+
+model = TextToSpeech(prepare_tts_model_path, model_config_path, train_config_path, vocoder_config_path, speaker_pre_trained_path)
+
+model.synthesize(sample_text)
+```
+
+There are two avilable models for recognition trageting MSA and egyptian dialect . You can set any of them using the `lang` attribute
 
 ```python
- from klaam import SpeechRecognition
- model = SpeechRecognition(lang = 'msa')
- model.transcribe('file.wav')
- ```
- 
- ## Datasets 
- 
+from klaam import SpeechRecognition
+model = SpeechRecognition(lang = 'msa')
+model.transcribe('file.wav')
+```
+
+## Datasets 
+
 | Dataset | Description | link |
 |---------| ------------------------------ | ---- |
 | MGB-3  | Egyptian Arabic Speech recognition in the wild. Every sentence was annotated by four annotators. More than 15 hours have been collected from YouTube.  |  requires registeration [here](https://arabicspeech.org/mgb3-asr/)|
@@ -82,7 +97,7 @@ The scripts are a modification of [jqueguiner/wav2vec2-sprint](https://github.co
 ### classification 
 This script is used for the classification task on the 5 classes. 
 
- ```sh
+```sh
 python run_classifier.py \
     --model_name_or_path="facebook/wav2vec2-large-xlsr-53" \
     --output_dir=/path/to/output \

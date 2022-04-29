@@ -1,3 +1,11 @@
 notes.txt
 *.pth.tar
 *.pth
+
+!data/**
+
+__pycache__
+.vscode
+.pytest_cache
+poetry.lock
+.ipynb_checkpoints

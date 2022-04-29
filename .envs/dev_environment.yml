@@ -1,0 +1,12 @@
+name: klaam_dev
+channels:
+  - defaults
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.8
+  - poetry
+  # klaam dependencies
+  - librosa
+  - ffmpeg
+  - torchaudio
