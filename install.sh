@@ -1,6 +1,6 @@
 #!/bin/bash
-# Usage: ./install.sh --env=pvoe # opics_pvoe
-# Usage: ./install.sh --env=pvoe --dev # opics_dev_pvoe
+# Usage: ./install.sh  # klaam
+# Usage: ./install.sh --dev # klaam_dev
 
 
 # arguments handling
