@@ -1,31 +1,11 @@
-name: Run tests
+name: publish_package_to_pypi
 
 on:
   push:
-    branches:
-      - main
-      - dev/*
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - README.md
-  pull_request:
-    types:
-      - opened
-      - reopened
-    branches:
-      - main
-      - dev/*
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - README.md
-  # (below) re-run the ci every midnight
-  # schedule:
-  #   - cron:  "0 0 * * *"
+    branches: ['release']
 
 jobs:
-  tests:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - name: Set up miniconda
@@ -61,7 +41,7 @@ jobs:
           echo "Running install script..."
           ./install.sh --dev
 
-      - name: Run tests
+      - name: Publish Package
         run: |
           echo "Setting conda init..."
           CONDA_PATH=$(conda info | grep -i 'base environment' | cut -d ":" -f2 | cut -d " " -f2)
@@ -70,5 +50,8 @@ jobs:
           echo "Activating environment..."
           conda activate klaam_dev
 
-          echo "Running tests..."
-          python -m pytest tests
+          echo "Building package..."
+          python -m poetry build
+
+          echo "Publish package..."
+          python -m poetry publish --username=${{ secrets.PYPIUSERNAME }} --password=${{ secrets.PYPIPASSWORD }}

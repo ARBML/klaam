@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "klaam"
-version = "0.0.1"
+version = "0.0.3"
 description = "Arabic speech recognition, classification and text-to-speech."
 license = "MIT"
 authors = [
