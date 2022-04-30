@@ -1,9 +1,9 @@
-import torch
 import numpy as np
+import torch
 
 
 class ScheduledOptim:
-    """ A simple wrapper class for learning rate scheduling """
+    """A simple wrapper class for learning rate scheduling"""
 
     def __init__(self, model, train_config, model_config, current_step):
 
@@ -43,7 +43,7 @@ class ScheduledOptim:
         return lr
 
     def _update_learning_rate(self):
-        """ Learning rate scheduling per step """
+        """Learning rate scheduling per step"""
         self.current_step += 1
         lr = self.init_lr * self._get_lr_scale()
 

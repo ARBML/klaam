@@ -1,8 +1,8 @@
 """ from https://github.com/keithito/tacotron """
 import re
+
 from . import cleaners
 from .symbols import symbols
-
 
 # Mappings from symbol to numeric ID and vice versa:
 _symbol_to_id = {s: i for i, s in enumerate(symbols)}
@@ -28,7 +28,7 @@ def text_to_sequence(text, cleaner_names):
     sequence = []
 
     # Check for curly braces and treat their contents as ARPAbet:
-    #TO_DO
+    # TO_DO
     while len(text):
         m = _curly_re.match(text)
 
@@ -36,7 +36,7 @@ def text_to_sequence(text, cleaner_names):
             sequence += _symbols_to_sequence(_clean_text(text, cleaner_names))
             break
         sequence += _symbols_to_sequence(_clean_text(m.group(1), cleaner_names))
-        #TO_DO why do we convert to arpabet
+        # TO_DO why do we convert to arpabet
         sequence += _arpabet_to_sequence(m.group(2))
         text = m.group(3)
 

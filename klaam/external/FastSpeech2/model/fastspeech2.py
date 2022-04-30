@@ -1,17 +1,15 @@
-import os
 import json
+import os
 
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
-from ..transformer import Encoder, Decoder, PostNet
-from .modules import VarianceAdaptor
+from ..transformer import Decoder, Encoder, PostNet
 from ..utils.tools import get_mask_from_lengths
+from .modules import VarianceAdaptor
 
 
 class FastSpeech2(nn.Module):
-    """ FastSpeech2 """
+    """FastSpeech2"""
 
     def __init__(self, preprocess_config, model_config):
         super(FastSpeech2, self).__init__()
@@ -29,9 +27,7 @@ class FastSpeech2(nn.Module):
         self.speaker_emb = None
         if model_config["multi_speaker"]:
             with open(
-                os.path.join(
-                    preprocess_config["path"]["preprocessed_path"], "speakers.json"
-                ),
+                os.path.join(preprocess_config["path"]["preprocessed_path"], "speakers.json"),
                 "r",
             ) as f:
                 n_speaker = len(json.load(f))
@@ -57,18 +53,12 @@ class FastSpeech2(nn.Module):
         d_control=1.0,
     ):
         src_masks = get_mask_from_lengths(src_lens, max_src_len)
-        mel_masks = (
-            get_mask_from_lengths(mel_lens, max_mel_len)
-            if mel_lens is not None
-            else None
-        )
+        mel_masks = get_mask_from_lengths(mel_lens, max_mel_len) if mel_lens is not None else None
 
         output = self.encoder(texts, src_masks)
 
         if self.speaker_emb is not None:
-            output = output + self.speaker_emb(speakers).unsqueeze(1).expand(
-                -1, max_src_len, -1
-            )
+            output = output + self.speaker_emb(speakers).unsqueeze(1).expand(-1, max_src_len, -1)
 
         (
             output,

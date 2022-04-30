@@ -36,7 +36,7 @@ jobs:
           python-version: "3.9"
           activate-environment: true
           miniconda-version: 'latest'
-      
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -51,7 +51,7 @@ jobs:
           which python
           python --version
           conda --version
-      
+
       - name: Create environment and install packages
         run: |
           echo "Setting conda init..."
@@ -60,7 +60,7 @@ jobs:
 
           echo "Running install script..."
           ./install.sh --dev
-      
+
       - name: Run tests
         run: |
           echo "Setting conda init..."

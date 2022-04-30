@@ -1,12 +1,12 @@
+import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
 
 from .Modules import ScaledDotProductAttention
 
 
 class MultiHeadAttention(nn.Module):
-    """ Multi-Head Attention module """
+    """Multi-Head Attention module"""
 
     def __init__(self, n_head, d_model, d_k, d_v, dropout=0.1):
         super().__init__()
@@ -47,9 +47,7 @@ class MultiHeadAttention(nn.Module):
         output, attn = self.attention(q, k, v, mask=mask)
 
         output = output.view(n_head, sz_b, len_q, d_v)
-        output = (
-            output.permute(1, 2, 0, 3).contiguous().view(sz_b, len_q, -1)
-        )  # b x lq x (n*dv)
+        output = output.permute(1, 2, 0, 3).contiguous().view(sz_b, len_q, -1)  # b x lq x (n*dv)
 
         output = self.dropout(self.fc(output))
         output = self.layer_norm(output + residual)
@@ -58,7 +56,7 @@ class MultiHeadAttention(nn.Module):
 
 
 class PositionwiseFeedForward(nn.Module):
-    """ A two-feed-forward-layer module """
+    """A two-feed-forward-layer module"""
 
     def __init__(self, d_in, d_hid, kernel_size, dropout=0.1):
         super().__init__()

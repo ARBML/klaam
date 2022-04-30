@@ -3,9 +3,8 @@ import os
 import librosa
 import numpy as np
 from scipy.io import wavfile
-from tqdm import tqdm
-
 from text import _clean_text
+from tqdm import tqdm
 
 
 def prepare_align(config):
@@ -20,12 +19,8 @@ def prepare_align(config):
                 if file_name[-4:] != ".wav":
                     continue
                 base_name = file_name[:-4]
-                text_path = os.path.join(
-                    in_dir, speaker, chapter, "{}.normalized.txt".format(base_name)
-                )
-                wav_path = os.path.join(
-                    in_dir, speaker, chapter, "{}.wav".format(base_name)
-                )
+                text_path = os.path.join(in_dir, speaker, chapter, "{}.normalized.txt".format(base_name))
+                wav_path = os.path.join(in_dir, speaker, chapter, "{}.wav".format(base_name))
                 with open(text_path) as f:
                     text = f.readline().strip("\n")
                 text = _clean_text(text, cleaners)

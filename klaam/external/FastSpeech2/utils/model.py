@@ -1,13 +1,12 @@
-import os
 import json
+import os
 
-import torch
+import gdown
 import numpy as np
+import torch
 
 from .. import hifigan
 from ..model import FastSpeech2, ScheduledOptim
-import gdown
-
 
 
 def get_model(args, configs, device, train=False):
@@ -23,9 +22,7 @@ def get_model(args, configs, device, train=False):
         model.load_state_dict(ckpt["model"])
 
     if train:
-        scheduled_optim = ScheduledOptim(
-            model, train_config, model_config, args.restore_step
-        )
+        scheduled_optim = ScheduledOptim(model, train_config, model_config, args.restore_step)
         if args.restore_step:
             scheduled_optim.load_state_dict(ckpt["optimizer"])
         model.train()
@@ -35,15 +32,16 @@ def get_model(args, configs, device, train=False):
     model.requires_grad_ = False
     return model
 
+
 def get_model_inference(configs, device, train=False):
     (preprocess_config, model_config, train_config) = configs
 
     model = FastSpeech2(preprocess_config, model_config).to(device)
-    url = 'https://drive.google.com/uc?id=1J7ZP_q-6mryXUhZ-8j9-RIItz2nJGOIX'
-    ckpt_path = 'model.pth.tar'
+    url = "https://drive.google.com/uc?id=1J7ZP_q-6mryXUhZ-8j9-RIItz2nJGOIX"
+    ckpt_path = "model.pth.tar"
     if not os.path.exists(ckpt_path):
-        gdown.download(url, ckpt_path, quiet=False) 
-    ckpt = torch.load(ckpt_path, map_location=torch.device('cpu'))
+        gdown.download(url, ckpt_path, quiet=False)
+    ckpt = torch.load(ckpt_path, map_location=torch.device("cpu"))
     model.load_state_dict(ckpt["model"])
 
     model.eval()
@@ -56,19 +54,15 @@ def get_param_num(model):
     return num_param
 
 
-def get_vocoder(config, device,vocoder_config_path=None,speaker_pre_trained_path=None):
+def get_vocoder(config, device, vocoder_config_path=None, speaker_pre_trained_path=None):
     name = config["vocoder"]["model"]
     speaker = config["vocoder"]["speaker"]
 
     if name == "MelGAN":
         if speaker == "LJSpeech":
-            vocoder = torch.hub.load(
-                "descriptinc/melgan-neurips", "load_melgan", "linda_johnson"
-            )
+            vocoder = torch.hub.load("descriptinc/melgan-neurips", "load_melgan", "linda_johnson")
         elif speaker == "universal":
-            vocoder = torch.hub.load(
-                "descriptinc/melgan-neurips", "load_melgan", "multi_speaker"
-            )
+            vocoder = torch.hub.load("descriptinc/melgan-neurips", "load_melgan", "multi_speaker")
         vocoder.mel2wav.eval()
         vocoder.mel2wav.to(device)
     elif name == "HiFi-GAN":
@@ -76,7 +70,7 @@ def get_vocoder(config, device,vocoder_config_path=None,speaker_pre_trained_path
             config = json.load(f)
         config = hifigan.AttrDict(config)
         vocoder = hifigan.Generator(config)
-        ckpt = torch.load(speaker_pre_trained_path, map_location=torch.device('cpu'))
+        ckpt = torch.load(speaker_pre_trained_path, map_location=torch.device("cpu"))
         vocoder.load_state_dict(ckpt["generator"])
         vocoder.eval()
         vocoder.remove_weight_norm()
@@ -93,10 +87,7 @@ def vocoder_infer(mels, vocoder, model_config, preprocess_config, lengths=None):
         elif name == "HiFi-GAN":
             wavs = vocoder(mels).squeeze(1)
 
-    wavs = (
-        wavs.cpu().numpy()
-        * preprocess_config["preprocessing"]["audio"]["max_wav_value"]
-    ).astype("int16")
+    wavs = (wavs.cpu().numpy() * preprocess_config["preprocessing"]["audio"]["max_wav_value"]).astype("int16")
     wavs = [wav for wav in wavs]
 
     for i in range(len(mels)):

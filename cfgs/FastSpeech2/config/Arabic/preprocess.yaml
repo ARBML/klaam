@@ -2,10 +2,10 @@ dataset: "Arabic"
 
 path:
   corpus_path: "/content/arabic-speech-corpus"
-  lexicon_path: "/home/alotaima/Projects/github/klaam/data/lexicon/librispeech-lexicon.txt"
+  lexicon_path: "data/lexicon/librispeech-lexicon.txt"
   raw_path: "/content/raw_data/Arabic"
   preprocessed_path: "/content/preprocessed_data/Arabic"
-  stats_path: "/home/alotaima/Projects/github/klaam/data/preprocessed_data/"
+  stats_path: "data/preprocessed_data/"
 
 preprocessing:
   val_size: 2

@@ -4,10 +4,7 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
-import soundfile as sf
-
 import datasets
-
 
 _CITATION = """
 """
@@ -28,6 +25,7 @@ dataset = dataset.map(map_to_array, remove_columns=["file"])
 """
 
 _URL = "mgb3.zip"
+
 
 class MorrocanSpeechCorpusConfig(datasets.BuilderConfig):
     """BuilderConfig for MorrocanSpeechCorpus."""
@@ -58,7 +56,7 @@ class MorrocanSpeechCorpus(datasets.GeneratorBasedBuilder):
                 {
                     "file": datasets.Value("string"),
                     "text": datasets.Value("string"),
-                    "segment": datasets.Value("string")
+                    "segment": datasets.Value("string"),
                 }
             ),
             supervised_keys=("file", "text"),
@@ -67,9 +65,11 @@ class MorrocanSpeechCorpus(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager):
-        self.archive_path = '/content/MGB5 Moroccan'
+        self.archive_path = "/content/MGB5 Moroccan"
         return [
-            datasets.SplitGenerator(name="train", gen_kwargs={"archive_path": os.path.join(self.archive_path, "train")}),
+            datasets.SplitGenerator(
+                name="train", gen_kwargs={"archive_path": os.path.join(self.archive_path, "train")}
+            ),
             datasets.SplitGenerator(name="dev", gen_kwargs={"archive_path": os.path.join(self.archive_path, "dev")}),
             datasets.SplitGenerator(name="test", gen_kwargs={"archive_path": os.path.join(self.archive_path, "test")}),
         ]
@@ -78,21 +78,16 @@ class MorrocanSpeechCorpus(datasets.GeneratorBasedBuilder):
         """Generate examples from a Librispeech archive_path."""
         text_dir = os.path.join(archive_path, "all_files")
         wav_dir = os.path.join(archive_path, "wav")
-        
+
         for text_file in os.listdir(text_dir):
-            if text_file.endswith('.txt'):
+            if text_file.endswith(".txt"):
                 segments_file = os.path.join(text_dir, text_file)
                 with open(segments_file, "r", encoding="utf-8") as f:
                     for _id, line in enumerate(f):
-                        segment = line.split(' ')[0]
-                        text = ' '.join(line.split(' ')[1:])
-                        wav_file = '_'.join(segment.split('_')[:2]) +'.wav'
-                        start, stop = segment.split('_')[4:6]
-                        wav_path = os.path.join(wav_dir, wav_file) 
-                        example = {
-                            "file": wav_path,
-                            "text": text,
-                            "segment":('_').join([start, stop])
-                        }
+                        segment = line.split(" ")[0]
+                        text = " ".join(line.split(" ")[1:])
+                        wav_file = "_".join(segment.split("_")[:2]) + ".wav"
+                        start, stop = segment.split("_")[4:6]
+                        wav_path = os.path.join(wav_dir, wav_file)
+                        example = {"file": wav_path, "text": text, "segment": ("_").join([start, stop])}
                         yield str(_id), example
-

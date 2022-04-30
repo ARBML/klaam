@@ -4,9 +4,10 @@ channels:
   - conda-forge
   - pytorch
 dependencies:
-  - python=3.8
+  - python=3.7
   - poetry
   # klaam dependencies
   - librosa
   - ffmpeg
+  - pytorch
   - torchaudio

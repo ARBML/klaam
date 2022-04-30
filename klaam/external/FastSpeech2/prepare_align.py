@@ -1,8 +1,7 @@
 import argparse
 
 import yaml
-
-from preprocessor import ljspeech, aishell3, libritts, arabic
+from preprocessor import aishell3, arabic, libritts, ljspeech
 
 
 def main(config):

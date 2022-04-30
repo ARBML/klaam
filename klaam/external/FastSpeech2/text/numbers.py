@@ -1,8 +1,8 @@
 """ from https://github.com/keithito/tacotron """
 
-import inflect
 import re
 
+import inflect
 
 _inflect = inflect.engine()
 _comma_number_re = re.compile(r"([0-9][0-9\,]+[0-9])")
@@ -56,9 +56,7 @@ def _expand_number(m):
         elif num % 100 == 0:
             return _inflect.number_to_words(num // 100) + " hundred"
         else:
-            return _inflect.number_to_words(
-                num, andword="", zero="oh", group=2
-            ).replace(", ", " ")
+            return _inflect.number_to_words(num, andword="", zero="oh", group=2).replace(", ", " ")
     else:
         return _inflect.number_to_words(num, andword="")
 

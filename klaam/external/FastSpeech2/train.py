@@ -2,18 +2,16 @@ import argparse
 import os
 
 import torch
-import yaml
 import torch.nn as nn
+import yaml
+from dataset import Dataset
+from evaluate import evaluate
+from model import FastSpeech2Loss
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-
-from utils.model import get_model, get_vocoder, get_param_num
-from utils.tools import to_device, log, synth_one_sample
-from model import FastSpeech2Loss
-from dataset import Dataset
-
-from evaluate import evaluate
+from utils.model import get_model, get_param_num, get_vocoder
+from utils.tools import log, synth_one_sample, to_device
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -24,9 +22,7 @@ def main(args, configs):
     preprocess_config, model_config, train_config = configs
 
     # Get dataset
-    dataset = Dataset(
-        "train.txt", preprocess_config, train_config, sort=True, drop_last=True
-    )
+    dataset = Dataset("train.txt", preprocess_config, train_config, sort=True, drop_last=True)
     batch_size = train_config["optimizer"]["batch_size"]
     group_size = 4  # Set this larger than 1 to enable sorting in Dataset
     assert batch_size * group_size < len(dataset)
@@ -123,9 +119,7 @@ def main(args, configs):
                         fig=fig,
                         tag="Training/step_{}_{}".format(step, tag),
                     )
-                    sampling_rate = preprocess_config["preprocessing"]["audio"][
-                        "sampling_rate"
-                    ]
+                    sampling_rate = preprocess_config["preprocessing"]["audio"]["sampling_rate"]
                     log(
                         train_logger,
                         audio=wav_reconstruction,
@@ -179,18 +173,12 @@ if __name__ == "__main__":
         required=True,
         help="path to preprocess.yaml",
     )
-    parser.add_argument(
-        "-m", "--model_config", type=str, required=True, help="path to model.yaml"
-    )
-    parser.add_argument(
-        "-t", "--train_config", type=str, required=True, help="path to train.yaml"
-    )
+    parser.add_argument("-m", "--model_config", type=str, required=True, help="path to model.yaml")
+    parser.add_argument("-t", "--train_config", type=str, required=True, help="path to train.yaml")
     args = parser.parse_args()
 
     # Read Config
-    preprocess_config = yaml.load(
-        open(args.preprocess_config, "r"), Loader=yaml.FullLoader
-    )
+    preprocess_config = yaml.load(open(args.preprocess_config, "r"), Loader=yaml.FullLoader)
     model_config = yaml.load(open(args.model_config, "r"), Loader=yaml.FullLoader)
     train_config = yaml.load(open(args.train_config, "r"), Loader=yaml.FullLoader)
     configs = (preprocess_config, model_config, train_config)

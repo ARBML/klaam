@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import json
 import logging
 import os
@@ -6,15 +5,15 @@ import re
 import sys
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
-import soundfile as sf
+
 import datasets
+import librosa
 import numpy as np
+import soundfile as sf
 import torch
+import transformers
 from packaging import version
 from torch import nn
-import librosa
-
-import transformers
 from transformers import (
     HfArgumentParser,
     Trainer,
@@ -27,7 +26,6 @@ from transformers import (
     set_seed,
 )
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
-
 
 if is_apex_available():
     from apex import amp
@@ -305,17 +303,16 @@ def main():
     set_seed(training_args.seed)
 
     # Get the datasets:
-    train_dataset = datasets.load_dataset("mor_speech_corpus", split='train', cache_dir=model_args.cache_dir)
+    train_dataset = datasets.load_dataset("mor_speech_corpus", split="train", cache_dir=model_args.cache_dir)
     eval_dataset = datasets.load_dataset("mor_speech_corpus", split="dev", cache_dir=model_args.cache_dir)
 
     # Create and save tokenizer
     chars_to_ignore_regex = f'[{"".join(data_args.chars_to_ignore)}]'
 
-
     def remove_special_characters(batch):
-        batch["text"] = re.sub(chars_to_ignore_regex, '', batch["text"]).lower() + " "
-        batch["text"] = re.sub('[a-zA-z]', '', batch["text"]).lower() + " "
-        batch["text"] = re.sub('[ًٌٍَُِ~]', '', batch["text"]).lower() + " "
+        batch["text"] = re.sub(chars_to_ignore_regex, "", batch["text"]).lower() + " "
+        batch["text"] = re.sub("[a-zA-z]", "", batch["text"]).lower() + " "
+        batch["text"] = re.sub("[ًٌٍَُِ~]", "", batch["text"]).lower() + " "
         return batch
 
     train_dataset = train_dataset.map(remove_special_characters)
@@ -388,19 +385,19 @@ def main():
     if data_args.max_val_samples is not None:
         eval_dataset = eval_dataset.select(range(data_args.max_val_samples))
 
-
     # Preprocessing the datasets.
     # We need to read the aduio files as arrays and tokenize the targets.
     def speech_file_to_array_fn(batch):
         srate = 16000
-        start, stop = batch['segment'].split('_')
-        speech_array, sampling_rate = sf.read(batch["file"], start = int(float(start)*srate), stop = int(float(stop)*srate))
+        start, stop = batch["segment"].split("_")
+        speech_array, sampling_rate = sf.read(
+            batch["file"], start=int(float(start) * srate), stop=int(float(stop) * srate)
+        )
         batch["speech"] = speech_array
         batch["sampling_rate"] = srate
         batch["target_text"] = batch["text"]
         return batch
 
-    
     train_dataset = train_dataset.map(
         speech_file_to_array_fn,
         remove_columns=train_dataset.column_names,
@@ -411,7 +408,6 @@ def main():
         remove_columns=eval_dataset.column_names,
         num_proc=data_args.preprocessing_num_workers,
     )
-
 
     def resample(batch):
         batch["speech"] = librosa.resample(np.asarray(batch["speech"]), 48_000, 16_000)

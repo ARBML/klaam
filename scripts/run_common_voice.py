@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import json
 import logging
 import os
@@ -11,10 +10,9 @@ import datasets
 import numpy as np
 import torch
 import torchaudio
+import transformers
 from packaging import version
 from torch import nn
-
-import transformers
 from transformers import (
     HfArgumentParser,
     Trainer,
@@ -27,7 +25,6 @@ from transformers import (
     set_seed,
 )
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
-
 
 if is_apex_available():
     from apex import amp
@@ -308,7 +305,9 @@ def main():
     train_dataset = datasets.load_dataset(
         "common_voice", data_args.dataset_config_name, split=data_args.train_split_name, cache_dir=model_args.cache_dir
     )
-    eval_dataset = datasets.load_dataset("common_voice", data_args.dataset_config_name, split="test", cache_dir=model_args.cache_dir)
+    eval_dataset = datasets.load_dataset(
+        "common_voice", data_args.dataset_config_name, split="test", cache_dir=model_args.cache_dir
+    )
 
     # Create and save tokenizer
     chars_to_ignore_regex = f'[{"".join(data_args.chars_to_ignore)}]'

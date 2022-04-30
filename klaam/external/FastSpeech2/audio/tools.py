@@ -1,8 +1,7 @@
-import torch
 import numpy as np
-from scipy.io.wavfile import write
-
+import torch
 from audio.audio_processing import griffin_lim
+from scipy.io.wavfile import write
 
 
 def get_mel_from_wav(audio, _stft):
@@ -24,9 +23,7 @@ def inv_mel_spec(mel, out_filename, _stft, griffin_iters=60):
     spec_from_mel = spec_from_mel.transpose(0, 1).unsqueeze(0)
     spec_from_mel = spec_from_mel * spec_from_mel_scaling
 
-    audio = griffin_lim(
-        torch.autograd.Variable(spec_from_mel[:, :, :-1]), _stft._stft_fn, griffin_iters
-    )
+    audio = griffin_lim(torch.autograd.Variable(spec_from_mel[:, :, :-1]), _stft._stft_fn, griffin_iters)
 
     audio = audio.squeeze()
     audio = audio.cpu().numpy()

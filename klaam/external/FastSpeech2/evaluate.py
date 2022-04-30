@@ -1,16 +1,12 @@
 import argparse
-import os
 
 import torch
 import yaml
-import torch.nn as nn
-from torch.utils.data import DataLoader
-
-from utils.model import get_model, get_vocoder
-from utils.tools import to_device, log, synth_one_sample
-from model import FastSpeech2Loss
 from dataset import Dataset
-
+from model import FastSpeech2Loss
+from torch.utils.data import DataLoader
+from utils.model import get_model
+from utils.tools import log, synth_one_sample, to_device
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -19,9 +15,7 @@ def evaluate(model, step, configs, logger=None, vocoder=None):
     preprocess_config, model_config, train_config = configs
 
     # Get dataset
-    dataset = Dataset(
-        "val.txt", preprocess_config, train_config, sort=False, drop_last=False
-    )
+    dataset = Dataset("val.txt", preprocess_config, train_config, sort=False, drop_last=False)
     batch_size = train_config["optimizer"]["batch_size"]
     loader = DataLoader(
         dataset,
@@ -97,18 +91,12 @@ if __name__ == "__main__":
         required=True,
         help="path to preprocess.yaml",
     )
-    parser.add_argument(
-        "-m", "--model_config", type=str, required=True, help="path to model.yaml"
-    )
-    parser.add_argument(
-        "-t", "--train_config", type=str, required=True, help="path to train.yaml"
-    )
+    parser.add_argument("-m", "--model_config", type=str, required=True, help="path to model.yaml")
+    parser.add_argument("-t", "--train_config", type=str, required=True, help="path to train.yaml")
     args = parser.parse_args()
 
     # Read Config
-    preprocess_config = yaml.load(
-        open(args.preprocess_config, "r"), Loader=yaml.FullLoader
-    )
+    preprocess_config = yaml.load(open(args.preprocess_config, "r"), Loader=yaml.FullLoader)
     model_config = yaml.load(open(args.model_config, "r"), Loader=yaml.FullLoader)
     train_config = yaml.load(open(args.train_config, "r"), Loader=yaml.FullLoader)
     configs = (preprocess_config, model_config, train_config)

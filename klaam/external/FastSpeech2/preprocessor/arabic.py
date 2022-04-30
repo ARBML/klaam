@@ -3,9 +3,8 @@ import os
 import librosa
 import numpy as np
 from scipy.io import wavfile
-from tqdm import tqdm
-
 from text import _clean_text
+from tqdm import tqdm
 
 
 def prepare_align(config):

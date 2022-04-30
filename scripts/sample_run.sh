@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 python run_classifier.py \
     --model_name_or_path="facebook/wav2vec2-large-xlsr-53" \
     --output_dir=/content/drive/MyDrive/Speech/dialects-test \

@@ -1,16 +1,15 @@
+import json
 import os
 import random
-import json
 
-import tgt
+import audio as Audio
 import librosa
 import numpy as np
 import pyworld as pw
+import tgt
 from scipy.interpolate import interp1d
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
-
-import audio as Audio
 
 
 class Preprocessor:
@@ -31,12 +30,8 @@ class Preprocessor:
             "phoneme_level",
             "frame_level",
         ]
-        self.pitch_phoneme_averaging = (
-            config["preprocessing"]["pitch"]["feature"] == "phoneme_level"
-        )
-        self.energy_phoneme_averaging = (
-            config["preprocessing"]["energy"]["feature"] == "phoneme_level"
-        )
+        self.pitch_phoneme_averaging = config["preprocessing"]["pitch"]["feature"] == "phoneme_level"
+        self.energy_phoneme_averaging = config["preprocessing"]["energy"]["feature"] == "phoneme_level"
 
         self.pitch_normalization = config["preprocessing"]["pitch"]["normalization"]
         self.energy_normalization = config["preprocessing"]["energy"]["normalization"]
@@ -58,7 +53,7 @@ class Preprocessor:
         os.makedirs((os.path.join(self.out_dir, "duration")), exist_ok=True)
 
         print("Processing Data ...")
-        out = list()
+        out = []
         n_frames = 0
         pitch_scaler = StandardScaler()
         energy_scaler = StandardScaler()
@@ -72,9 +67,7 @@ class Preprocessor:
                     continue
 
                 basename = wav_name.split(".")[0]
-                tg_path = os.path.join(
-                    self.out_dir, "TextGrid", speaker, "{}.TextGrid".format(basename)
-                )
+                tg_path = os.path.join(self.out_dir, "TextGrid", speaker, "{}.TextGrid".format(basename))
                 if os.path.exists(tg_path):
                     ret = self.process_utterance(speaker, basename)
                     if ret is None:
@@ -106,12 +99,8 @@ class Preprocessor:
             energy_mean = 0
             energy_std = 1
 
-        pitch_min, pitch_max = self.normalize(
-            os.path.join(self.out_dir, "pitch"), pitch_mean, pitch_std
-        )
-        energy_min, energy_max = self.normalize(
-            os.path.join(self.out_dir, "energy"), energy_mean, energy_std
-        )
+        pitch_min, pitch_max = self.normalize(os.path.join(self.out_dir, "pitch"), pitch_mean, pitch_std)
+        energy_min, energy_max = self.normalize(os.path.join(self.out_dir, "energy"), energy_mean, energy_std)
 
         # Save files
         with open(os.path.join(self.out_dir, "speakers.json"), "w") as f:
@@ -133,13 +122,9 @@ class Preprocessor:
                 ],
             }
             f.write(json.dumps(stats))
-       with open(os.path.join(self.stats_path, "stats.json"), "w") as f:
+        with open(os.path.join(self.stats_path, "stats.json"), "w") as f:
             f.write(json.dumps(stats))
-        print(
-            "Total time: {} hours".format(
-                n_frames * self.hop_length / self.sampling_rate / 3600
-            )
-        )
+        print("Total time: {} hours".format(n_frames * self.hop_length / self.sampling_rate / 3600))
 
         random.shuffle(out)
         out = [r for r in out if r is not None]
@@ -157,24 +142,18 @@ class Preprocessor:
     def process_utterance(self, speaker, basename):
         wav_path = os.path.join(self.in_dir, speaker, "{}.wav".format(basename))
         text_path = os.path.join(self.in_dir, speaker, "{}.lab".format(basename))
-        tg_path = os.path.join(
-            self.out_dir, "TextGrid", speaker, "{}.TextGrid".format(basename)
-        )
+        tg_path = os.path.join(self.out_dir, "TextGrid", speaker, "{}.TextGrid".format(basename))
 
         # Get alignments
-        textgrid = tgt.io.read_textgrid(tg_path, encoding='utf-8-sig')
-        phone, duration, start, end = self.get_alignment(
-            textgrid.get_tier_by_name("phones")
-        )
+        textgrid = tgt.io.read_textgrid(tg_path, encoding="utf-8-sig")
+        phone, duration, start, end = self.get_alignment(textgrid.get_tier_by_name("phones"))
         text = "{" + " ".join(phone) + "}"
         if start >= end:
             return None
 
         # Read and trim wav files
         wav, _ = librosa.load(wav_path)
-        wav = wav[
-            int(self.sampling_rate * start) : int(self.sampling_rate * end)
-        ].astype(np.float32)
+        wav = wav[int(self.sampling_rate * start) : int(self.sampling_rate * end)].astype(np.float32)
 
         # Read raw text
         with open(text_path, "r") as f:

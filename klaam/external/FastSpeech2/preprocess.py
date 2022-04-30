@@ -1,9 +1,7 @@
 import argparse
 
 import yaml
-
 from preprocessor.preprocessor import Preprocessor
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

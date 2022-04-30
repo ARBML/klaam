@@ -1,44 +1,37 @@
-#!/usr/bin/env python3
-import json
 import logging
 import os
-import re
 import sys
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
-import librosa
 
 import datasets
+import librosa
 import numpy as np
+import soundfile as sf
 import torch
-from packaging import version
-from torch import nn
-from torch.nn import functional as F
-
 import transformers
+from models import Wav2Vec2ClassificationModel
+from packaging import version
+from processors import CustomWav2Vec2Processor
+from sklearn.metrics import accuracy_score
+from torch import nn
 from transformers import (
     HfArgumentParser,
     Trainer,
-    Wav2Vec2FeatureExtractor,
     TrainingArguments,
+    Wav2Vec2FeatureExtractor,
     is_apex_available,
     set_seed,
 )
-from processors import CustomWav2Vec2Processor
-from models import Wav2Vec2ClassificationModel
-
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
-import soundfile as sf
-from sklearn.metrics import accuracy_score
 
 os.environ["WANDB_DISABLED"] = "true"
 if is_apex_available():
-    from apex import amp
+    pass
 
 
 if version.parse(torch.__version__) >= version.parse("1.6"):
     _is_native_amp_available = True
-    from torch.cuda.amp import autocast
 
 logger = logging.getLogger(__name__)
 
@@ -89,9 +82,7 @@ class ModelArguments:
     )
     gradient_checkpointing: Optional[bool] = field(
         default=True,
-        metadata={
-            "help": "If True, use gradient checkpointing to save memory at the expense of slower backward pass."
-        },
+        metadata={"help": "If True, use gradient checkpointing to save memory at the expense of slower backward pass."},
     )
     layerdrop: Optional[float] = field(default=0.0, metadata={"help": "The LayerDrop probability."})
 
@@ -180,15 +171,14 @@ class DataCollatorCTCWithPadding:
         # different padding methods
 
         input_features = [{"input_values": feature["input_values"]} for feature in features]
-        
+
         def onehot(lbl):
-            onehot = [0]*5
+            onehot = [0] * 5
             onehot[int(lbl)] = 1
             return onehot
-        
+
         output_features = [onehot(feature["labels"]) for feature in features]
-        
-        
+
         batch = self.processor.pad(
             input_features,
             padding=True,
@@ -228,26 +218,24 @@ class CTCTrainer(Trainer):
         model.train()
         inputs = self._prepare_inputs(inputs)
         loss = self.compute_loss(model, inputs)
-        
+
         if self.args.gradient_accumulation_steps > 1:
             loss = loss / self.args.gradient_accumulation_steps
 
         loss.backward()
 
         return loss.detach()
-    
+
     def compute_loss(self, model, inputs, return_outputs=False):
         # labels = inputs.pop("labels").to('cuda')
-        labels = inputs['labels'].to('cuda')
-        outputs = model(**inputs) # torch.Size([32, 5])
+        labels = inputs["labels"].to("cuda")
+        outputs = model(**inputs)  # torch.Size([32, 5])
         loss_fct = torch.nn.CrossEntropyLoss()
-        loss = loss_fct(outputs['logits'],
-                        labels.argmax(-1).long())
-        
+        loss = loss_fct(outputs["logits"], labels.argmax(-1).long())
+
         return (loss, outputs) if return_outputs else loss
 
 
-    
 def main():
     # See all possible arguments in src/transformers/training_args.py
     # or by passing the --help flag to this script.
@@ -300,38 +288,36 @@ def main():
     train_dataset = datasets.load_dataset("dialect_speech_corpus", split="train", cache_dir=model_args.cache_dir)
     eval_dataset = datasets.load_dataset("dialect_speech_corpus", split="dev", cache_dir=model_args.cache_dir)
 
-
     feature_extractor = Wav2Vec2FeatureExtractor(
         feature_size=1, sampling_rate=16_000, padding_value=0.0, do_normalize=True, return_attention_mask=True
     )
     processor = CustomWav2Vec2Processor(feature_extractor=feature_extractor)
     model = Wav2Vec2ClassificationModel.from_pretrained(
-        "facebook/wav2vec2-large-xlsr-53", 
+        "facebook/wav2vec2-large-xlsr-53",
         attention_dropout=0.01,
         hidden_dropout=0.01,
         feat_proj_dropout=0.0,
         mask_time_prob=0.05,
         layerdrop=0.01,
-        gradient_checkpointing=True, 
+        gradient_checkpointing=True,
     )
-    
+
     if model_args.freeze_feature_extractor:
         model.freeze_feature_extractor()
-    
+
     if data_args.max_train_samples is not None:
         train_dataset = train_dataset.select(range(data_args.max_train_samples))
 
     if data_args.max_val_samples is not None:
         eval_dataset = eval_dataset.select(range(data_args.max_val_samples))
 
-    
     # Preprocessing the datasets.
     # We need to read the aduio files as arrays and tokenize the targets.
     def speech_file_to_array_fn(batch):
-        start = 0 
-        stop = 20 
+        start = 0
+        stop = 20
         srate = 16_000
-        speech_array, sampling_rate = sf.read(batch["file"], start = start * srate , stop = stop * srate)
+        speech_array, sampling_rate = sf.read(batch["file"], start=start * srate, stop=stop * srate)
         batch["speech"] = librosa.resample(np.asarray(speech_array), sampling_rate, srate)
         batch["sampling_rate"] = srate
         batch["parent"] = batch["label"]
@@ -347,7 +333,7 @@ def main():
         remove_columns=eval_dataset.column_names,
         num_proc=data_args.preprocessing_num_workers,
     )
-    
+
     def prepare_dataset(batch):
         # check that all files have the correct sampling rate
         assert (
@@ -371,7 +357,7 @@ def main():
         batched=True,
         num_proc=data_args.preprocessing_num_workers,
     )
-    
+
     from sklearn.metrics import classification_report, confusion_matrix
 
     def compute_metrics(pred):

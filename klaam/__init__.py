@@ -1,1 +1,1 @@
-from klaam.run import *
+from klaam.run import SpeechClassification, SpeechRecognition, TextToSpeech

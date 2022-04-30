@@ -1,13 +1,12 @@
-import os
 import json
+import os
 
+import matplotlib
+import numpy as np
 import torch
 import torch.nn.functional as F
-import numpy as np
-import matplotlib
-from scipy.io import wavfile
 from matplotlib import pyplot as plt
-
+from scipy.io import wavfile
 
 matplotlib.use("Agg")
 
@@ -66,9 +65,7 @@ def to_device(data, device):
         return (ids, raw_texts, speakers, texts, src_lens, max_src_len)
 
 
-def log(
-    logger, step=None, losses=None, fig=None, audio=None, sampling_rate=22050, tag=""
-):
+def log(logger, step=None, losses=None, fig=None, audio=None, sampling_rate=22050, tag=""):
     if losses is not None:
         logger.add_scalar("Loss/total_loss", losses[0], step)
         logger.add_scalar("Loss/mel_loss", losses[1], step)
@@ -100,7 +97,7 @@ def get_mask_from_lengths(lengths, max_len=None):
 
 
 def expand(values, durations):
-    out = list()
+    out = []
     for value, d in zip(values, durations):
         out += [value] * max(0, int(d))
     return np.array(out)
@@ -126,16 +123,12 @@ def synth_one_sample(targets, predictions, vocoder, model_config, preprocess_con
         energy = targets[10][0, :mel_len].detach().cpu().numpy()
 
     try:
-       with open(
-        os.path.join(preprocess_config["path"]["preprocessed_path"], "stats.json")
-    ) as f:
+        with open(os.path.join(preprocess_config["path"]["preprocessed_path"], "stats.json")) as f:
             stats = json.load(f)
             stats = stats["pitch"] + stats["energy"][:2]
-    
+
     except:
-        with open(
-        os.path.join(preprocess_config["path"]["stats_path"], "stats.json")
-    ) as f:
+        with open(os.path.join(preprocess_config["path"]["stats_path"], "stats.json")) as f:
             stats = json.load(f)
             stats = stats["pitch"] + stats["energy"][:2]
     fig = plot_mel(
@@ -188,29 +181,25 @@ def synth_samples(targets, predictions, vocoder, model_config, preprocess_config
         else:
             energy = predictions[3][i, :mel_len].detach().cpu().numpy()
 
-        with open(
-            os.path.join(preprocess_config["path"]["stats_path"], "stats.json")
-        ) as f:
+        with open(os.path.join(preprocess_config["path"]["stats_path"], "stats.json")) as f:
             stats = json.load(f)
             stats = stats["pitch"] + stats["energy"][:2]
 
-#         fig = plot_mel(
-#             [
-#                 (mel_prediction.cpu().numpy(), pitch, energy),
-#             ],
-#             stats,
-#             ["Synthetized Spectrogram"],
-#         )
-#         plt.savefig(os.path.join(path, "{}.png".format(basename)))
-#         plt.close()
+    #         fig = plot_mel(
+    #             [
+    #                 (mel_prediction.cpu().numpy(), pitch, energy),
+    #             ],
+    #             stats,
+    #             ["Synthetized Spectrogram"],
+    #         )
+    #         plt.savefig(os.path.join(path, "{}.png".format(basename)))
+    #         plt.close()
 
     from .model import vocoder_infer
 
     mel_predictions = predictions[1].transpose(1, 2)
     lengths = predictions[9] * preprocess_config["preprocessing"]["stft"]["hop_length"]
-    wav_predictions = vocoder_infer(
-        mel_predictions, vocoder, model_config, preprocess_config, lengths=lengths
-    )
+    wav_predictions = vocoder_infer(mel_predictions, vocoder, model_config, preprocess_config, lengths=lengths)
 
     sampling_rate = preprocess_config["preprocessing"]["audio"]["sampling_rate"]
     for wav, basename in zip(wav_predictions, basenames):
@@ -245,9 +234,7 @@ def plot_mel(data, stats, titles):
         ax1.set_xlim(0, mel.shape[1])
         ax1.set_ylim(0, pitch_max)
         ax1.set_ylabel("F0", color="tomato")
-        ax1.tick_params(
-            labelsize="x-small", colors="tomato", bottom=False, labelbottom=False
-        )
+        ax1.tick_params(labelsize="x-small", colors="tomato", bottom=False, labelbottom=False)
 
         ax2 = add_axis(fig, axes[i][0])
         ax2.plot(energy, color="darkviolet")
@@ -271,9 +258,7 @@ def plot_mel(data, stats, titles):
 
 def pad_1D(inputs, PAD=0):
     def pad_data(x, length, PAD):
-        x_padded = np.pad(
-            x, (0, length - x.shape[0]), mode="constant", constant_values=PAD
-        )
+        x_padded = np.pad(x, (0, length - x.shape[0]), mode="constant", constant_values=PAD)
         return x_padded
 
     max_len = max((len(x) for x in inputs))
@@ -289,9 +274,7 @@ def pad_2D(inputs, maxlen=None):
             raise ValueError("not max_len")
 
         s = np.shape(x)[1]
-        x_padded = np.pad(
-            x, (0, max_len - np.shape(x)[0]), mode="constant", constant_values=PAD
-        )
+        x_padded = np.pad(x, (0, max_len - np.shape(x)[0]), mode="constant", constant_values=PAD)
         return x_padded[:, :s]
 
     if maxlen:
@@ -309,16 +292,12 @@ def pad(input_ele, mel_max_length=None):
     else:
         max_len = max([input_ele[i].size(0) for i in range(len(input_ele))])
 
-    out_list = list()
+    out_list = []
     for i, batch in enumerate(input_ele):
         if len(batch.shape) == 1:
-            one_batch_padded = F.pad(
-                batch, (0, max_len - batch.size(0)), "constant", 0.0
-            )
+            one_batch_padded = F.pad(batch, (0, max_len - batch.size(0)), "constant", 0.0)
         elif len(batch.shape) == 2:
-            one_batch_padded = F.pad(
-                batch, (0, 0, 0, max_len - batch.size(0)), "constant", 0.0
-            )
+            one_batch_padded = F.pad(batch, (0, 0, 0, max_len - batch.size(0)), "constant", 0.0)
         out_list.append(one_batch_padded)
     out_padded = torch.stack(out_list)
     return out_padded

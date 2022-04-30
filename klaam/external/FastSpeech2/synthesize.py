@@ -1,59 +1,52 @@
-import re
 import argparse
 from string import punctuation
-from arabic_pronounce import phonetise
+
+import numpy as np
 import torch
 import yaml
-import numpy as np
-from torch.utils.data import DataLoader
-from pypinyin import pinyin, Style
-from .buckwalter import ar2bw, bw2ar
-from utils.model import get_model, get_vocoder
-from utils.tools import to_device, synth_samples
+from arabic_pronounce import phonetise
 from dataset import TextDataset
+from pypinyin import Style, pinyin
 from text import text_to_sequence
+from torch.utils.data import DataLoader
+from utils.model import get_model, get_vocoder
+from utils.tools import synth_samples, to_device
+
+from .buckwalter import bw2ar
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-
-
-def preprocess_arabic(text, preprocess_config, bw = False):
+def preprocess_arabic(text, preprocess_config, bw=False):
 
     text = text.rstrip(punctuation)
     if bw:
         text = "".join([bw2ar[l] if l in bw2ar else l for l in text])
-    phones = ''
-    for word in text.split(' '):
+    phones = ""
+    for word in text.split(" "):
         if word in punctuation:
-          pass 
+            pass
         elif len(word.strip()) > 0:
-          phones+=phonetise(word)[0]
-        
-    phones = "{" + "}{".join(phones.split(' ')) + "}"
+            phones += phonetise(word)[0]
+
+    phones = "{" + "}{".join(phones.split(" ")) + "}"
     phones = phones.replace("}{", " ")
 
     print("Raw Text Sequence: {}".format(text))
     print("Phoneme Sequence: {}".format(phones))
     sequence = np.array(
-        #TO_DO
-        text_to_sequence(
-            phones, preprocess_config["preprocessing"]["text"]["text_cleaners"]
-        )
+        # TO_DO
+        text_to_sequence(phones, preprocess_config["preprocessing"]["text"]["text_cleaners"])
     )
 
     return np.array(sequence)
+
 
 def preprocess_mandarin(text, preprocess_config):
     lexicon = read_lexicon(preprocess_config["path"]["lexicon_path"])
 
     phones = []
-    pinyins = [
-        p[0]
-        for p in pinyin(
-            text, style=Style.TONE3, strict=False, neutral_tone_with_five=True
-        )
-    ]
+    pinyins = [p[0] for p in pinyin(text, style=Style.TONE3, strict=False, neutral_tone_with_five=True)]
     for p in pinyins:
         if p in lexicon:
             phones += lexicon[p]
@@ -64,10 +57,8 @@ def preprocess_mandarin(text, preprocess_config):
     print("Raw Text Sequence: {}".format(text))
     print("Phoneme Sequence: {}".format(phones))
     sequence = np.array(
-        #TO_DO
-        text_to_sequence(
-            phones, preprocess_config["preprocessing"]["text"]["text_cleaners"]
-        )
+        # TO_DO
+        text_to_sequence(phones, preprocess_config["preprocessing"]["text"]["text_cleaners"])
     )
 
     return np.array(sequence)
@@ -81,12 +72,7 @@ def synthesize(model, step, configs, vocoder, batchs, control_values):
         batch = to_device(batch, device)
         with torch.no_grad():
             # Forward
-            output = model(
-                *(batch[2:]),
-                p_control=pitch_control,
-                e_control=energy_control,
-                d_control=duration_control
-            )
+            output = model(*(batch[2:]), p_control=pitch_control, e_control=energy_control, d_control=duration_control)
             synth_samples(
                 batch,
                 output,
@@ -141,12 +127,8 @@ if __name__ == "__main__":
         required=True,
         help="path to preprocess.yaml",
     )
-    parser.add_argument(
-        "-m", "--model_config", type=str, required=True, help="path to model.yaml"
-    )
-    parser.add_argument(
-        "-t", "--train_config", type=str, required=True, help="path to train.yaml"
-    )
+    parser.add_argument("-m", "--model_config", type=str, required=True, help="path to model.yaml")
+    parser.add_argument("-t", "--train_config", type=str, required=True, help="path to train.yaml")
     parser.add_argument(
         "--pitch_control",
         type=float,
@@ -174,9 +156,7 @@ if __name__ == "__main__":
         assert args.source is None and args.text is not None
 
     # Read Config
-    preprocess_config = yaml.load(
-        open(args.preprocess_config, "r"), Loader=yaml.FullLoader
-    )
+    preprocess_config = yaml.load(open(args.preprocess_config, "r"), Loader=yaml.FullLoader)
     model_config = yaml.load(open(args.model_config, "r"), Loader=yaml.FullLoader)
     train_config = yaml.load(open(args.train_config, "r"), Loader=yaml.FullLoader)
     configs = (preprocess_config, model_config, train_config)
@@ -204,7 +184,7 @@ if __name__ == "__main__":
         elif preprocess_config["preprocessing"]["text"]["language"] == "zh":
             texts = np.array([preprocess_mandarin(args.text, preprocess_config)])
         elif preprocess_config["preprocessing"]["text"]["language"] == "ar":
-            texts = np.array([preprocess_arabic(args.text, preprocess_config, bw = args.bw)])
+            texts = np.array([preprocess_arabic(args.text, preprocess_config, bw=args.bw)])
         text_lens = np.array([len(texts[0])])
         batchs = [(ids, raw_texts, speakers, texts, text_lens, max(text_lens))]
 

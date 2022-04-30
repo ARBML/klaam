@@ -15,7 +15,6 @@
 """
 Speech processor class for Wav2Vec2
 """
-from contextlib import contextmanager
 
 from transformers import Wav2Vec2FeatureExtractor
 
@@ -41,7 +40,6 @@ class CustomWav2Vec2Processor:
 
         self.feature_extractor = feature_extractor
         self.current_processor = self.feature_extractor
-
 
     def save_pretrained(self, save_directory):
         """
@@ -114,4 +112,3 @@ class CustomWav2Vec2Processor:
         above two methods for more information.
         """
         return self.current_processor.pad(*args, **kwargs)
-

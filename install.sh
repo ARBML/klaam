@@ -26,7 +26,7 @@ while test $# -gt 0; do
             return 1;
             ;;
     esac
-done  
+done
 
 env_name="klaam"
 file_name="environment.yml"
@@ -60,9 +60,6 @@ default_install() {
 
     echo "Installing dependencies using poetry..."
     python -m poetry install
-
-    echo "Installing dependencies using pip..."
-    python -m pip install numba==0.53
 
 }
 

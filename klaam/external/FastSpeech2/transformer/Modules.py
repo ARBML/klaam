@@ -1,10 +1,10 @@
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
 
 
 class ScaledDotProductAttention(nn.Module):
-    """ Scaled Dot-Product Attention """
+    """Scaled Dot-Product Attention"""
 
     def __init__(self, temperature):
         super().__init__()
