@@ -1,11 +1,11 @@
-name: publish_package_to_pypi
+name: test_publish_package_to_pypi
 
 on:
   push:
-    branches: ['stable/*']
+    branches: ['test_stable/*']
 
 jobs:
-  publish:
+  test_publish:
     runs-on: ubuntu-latest
     steps:
       - name: Set up miniconda
@@ -54,4 +54,5 @@ jobs:
           python -m poetry build
 
           echo "Publish package..."
-          python -m poetry publish --username=${{ secrets.PYPIUSERNAME }} --password=${{ secrets.PYPIPASSWORD }}
+          python -m poetry config repositories.testpypi https://test.pypi.org/legacy/
+          python -m poetry publish -r testpypi --username=${{ secrets.PYPIUSERNAME }} --password=${{ secrets.PYPIPASSWORD }}

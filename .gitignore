@@ -11,3 +11,4 @@ poetry.lock
 .ipynb_checkpoints
 
 dist
+.secrets
