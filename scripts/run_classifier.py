@@ -10,9 +10,7 @@ import numpy as np
 import soundfile as sf
 import torch
 import transformers
-from models import Wav2Vec2ClassificationModel
 from packaging import version
-from processors import CustomWav2Vec2Processor
 from sklearn.metrics import accuracy_score
 from torch import nn
 from transformers import (
@@ -24,6 +22,9 @@ from transformers import (
     set_seed,
 )
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
+
+from klaam.models.wav2vec import Wav2Vec2ClassificationModel
+from klaam.processors.wav2vec import CustomWav2Vec2Processor
 
 os.environ["WANDB_DISABLED"] = "true"
 if is_apex_available():
@@ -80,10 +81,10 @@ class ModelArguments:
             "vectors will be masked along the time axis. This is only relevant if ``apply_spec_augment is True``."
         },
     )
-    gradient_checkpointing: Optional[bool] = field(
-        default=True,
-        metadata={"help": "If True, use gradient checkpointing to save memory at the expense of slower backward pass."},
-    )
+    # gradient_checkpointing: Optional[bool] = field(
+    #     default=True,
+    #     metadata={"help": "If True, use gradient checkpointing to save memory at the expense of slower backward pass."},
+    # )
     layerdrop: Optional[float] = field(default=0.0, metadata={"help": "The LayerDrop probability."})
 
 
