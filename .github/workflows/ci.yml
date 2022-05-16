@@ -1,0 +1,74 @@
+name: Run tests
+
+on:
+  push:
+    branches:
+      - main
+      - dev/*
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - README.md
+  pull_request:
+    types:
+      - opened
+      - reopened
+    branches:
+      - main
+      - dev/*
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - README.md
+  # (below) re-run the ci every midnight
+  # schedule:
+  #   - cron:  "0 0 * * *"
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-activate-base: true
+          auto-update-conda: true
+          python-version: "3.9"
+          activate-environment: true
+          miniconda-version: 'latest'
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Print conda & python path and version
+        run : |
+          echo "Setting conda init..."
+          CONDA_PATH=$(conda info | grep -i 'base environment' | cut -d ":" -f2 | cut -d " " -f2)
+          source $CONDA_PATH/etc/profile.d/conda.sh
+
+          echo "Outputting information..."
+          which conda
+          which python
+          python --version
+          conda --version
+
+      - name: Create environment and install packages
+        run: |
+          echo "Setting conda init..."
+          CONDA_PATH=$(conda info | grep -i 'base environment' | cut -d ":" -f2 | cut -d " " -f2)
+          source $CONDA_PATH/etc/profile.d/conda.sh
+
+          echo "Running install script..."
+          ./install.sh --dev
+
+      - name: Run tests
+        run: |
+          echo "Setting conda init..."
+          CONDA_PATH=$(conda info | grep -i 'base environment' | cut -d ":" -f2 | cut -d " " -f2)
+          source $CONDA_PATH/etc/profile.d/conda.sh
+
+          echo "Activating environment..."
+          conda activate klaam_dev
+
+          echo "Running tests..."
+          python -m pytest tests

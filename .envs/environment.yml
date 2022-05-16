@@ -1,0 +1,9 @@
+name: klaam
+channels:
+  - defaults
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.7
+  - poetry
+  - cudatoolkit

@@ -1,0 +1,57 @@
+name: publish_package_to_pypi
+
+on:
+  push:
+    branches: ['stable/*']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-activate-base: true
+          auto-update-conda: true
+          python-version: "3.9"
+          activate-environment: true
+          miniconda-version: 'latest'
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Print conda & python path and version
+        run : |
+          echo "Setting conda init..."
+          CONDA_PATH=$(conda info | grep -i 'base environment' | cut -d ":" -f2 | cut -d " " -f2)
+          source $CONDA_PATH/etc/profile.d/conda.sh
+
+          echo "Outputting information..."
+          which conda
+          which python
+          python --version
+          conda --version
+
+      - name: Create environment and install packages
+        run: |
+          echo "Setting conda init..."
+          CONDA_PATH=$(conda info | grep -i 'base environment' | cut -d ":" -f2 | cut -d " " -f2)
+          source $CONDA_PATH/etc/profile.d/conda.sh
+
+          echo "Running install script..."
+          ./install.sh --dev
+
+      - name: Publish Package
+        run: |
+          echo "Setting conda init..."
+          CONDA_PATH=$(conda info | grep -i 'base environment' | cut -d ":" -f2 | cut -d " " -f2)
+          source $CONDA_PATH/etc/profile.d/conda.sh
+
+          echo "Activating environment..."
+          conda activate klaam_dev
+
+          echo "Building package..."
+          python -m poetry build
+
+          echo "Publish package..."
+          python -m poetry publish --username=${{ secrets.PYPIUSERNAME }} --password=${{ secrets.PYPIPASSWORD }}
