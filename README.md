@@ -76,7 +76,7 @@ We currently support four models, three of them are avilable on transformers.
   <tr>
     <td>Demo</td>
     <td>Classification, Recongition and Text-to-speech  in a few lines of code.</td>
-    <td><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/demo.ipynb">
+    <td><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/notebooks/demo.ipynb">
     <img src="https://colab.research.google.com/assets/colab-badge.svg"  >
     </a></td>
   </tr>
@@ -84,7 +84,7 @@ We currently support four models, three of them are avilable on transformers.
   <tr>
     <td>Demo with mic</td>
     <td>Audio Recongition and classification with recording.</td>
-    <td><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/demo_with_mic.ipynb">
+    <td><a href="https://colab.research.google.com/github/ARBML/klaam/blob/main/notebooks/demo_with_mic.ipynb">
     <img src="https://colab.research.google.com/assets/colab-badge.svg">
     </a></td>
   </tr>
