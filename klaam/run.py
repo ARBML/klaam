@@ -16,7 +16,7 @@ class SpeechRecognition:
         self.bw = False
         if path is None:
             if lang == "egy":
-                model_dir = "Zaid/wav2vec2-large-xlsr-53-arabic-egyptian"
+                model_dir = "arbml/wav2vec2-large-xlsr-53-arabic-egyptian"
             elif lang == "msa":
                 model_dir = "elgeish/wav2vec2-large-xlsr-53-arabic"
                 self.bw = True
@@ -33,7 +33,7 @@ class SpeechRecognition:
 class SpeechClassification:
     def __init__(self, path=None):
         if path is None:
-            dir = "Zaid/wav2vec2-large-xlsr-dialect-classification"
+            dir = "arbml/wav2vec2-large-xlsr-dialect-classification"
         else:
             dir = path
         self.model = Wav2Vec2ClassificationModel.from_pretrained(dir).to(DEVICE)

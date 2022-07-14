@@ -60,9 +60,9 @@ We currently support four models, three of them are avilable on transformers.
 
 |Language | Description | Source |
 |-------- | ----------- | ------ |
-|Egyptian | Speech recognition | [wav2vec2-large-xlsr-53-arabic-egyptian](https://huggingface.co/Zaid/wav2vec2-large-xlsr-53-arabic-egyptian)|
+|Egyptian | Speech recognition | [wav2vec2-large-xlsr-53-arabic-egyptian](https://huggingface.co/arbml/wav2vec2-large-xlsr-53-arabic-egyptian)|
 |Standard Arabic | Speech recognition | [wav2vec2-large-xlsr-53-arabic](https://huggingface.co/elgeish/wav2vec2-large-xlsr-53-arabic)
-|EGY, NOR, LAV, GLF, MSA | Speech classification | [wav2vec2-large-xlsr-dialect-classification](https://huggingface.co/Zaid/wav2vec2-large-xlsr-dialect-classification)|
+|EGY, NOR, LAV, GLF, MSA | Speech classification | [wav2vec2-large-xlsr-dialect-classification](https://huggingface.co/arbml/wav2vec2-large-xlsr-dialect-classification)|
 |Standard Arabic| Text-to-Speech | [fastspeech2]()|
 
 ## Example Notebooks
