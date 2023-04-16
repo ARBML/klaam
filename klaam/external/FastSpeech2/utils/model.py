@@ -37,7 +37,7 @@ def get_model_inference(configs, device, train=False):
     (preprocess_config, model_config, train_config) = configs
 
     model = FastSpeech2(preprocess_config, model_config).to(device)
-    url = "https://drive.google.com/uc?id=1J7ZP_q-6mryXUhZ-8j9-RIItz2nJGOIX"
+    url = "https://drive.google.com/uc?id=1p0g28WlbHftoatXBz87GL146y5vkoORd"
     ckpt_path = "model.pth.tar"
     if not os.path.exists(ckpt_path):
         gdown.download(url, ckpt_path, quiet=False)
