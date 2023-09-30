@@ -1,29 +1,31 @@
 # klaam
+
 Arabic speech recognition, classification and text-to-speech using many advanced models like wave2vec and fastspeech2. This repository allows training and prediction using pretrained models.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/ARBML/klaam/main/misc/klaam_logo.png" width="250px"/>
 </p>
 
+## 1. Usage
 
-## Usage
+### 1.1 Speech Classification
 
-### Speech Classification
 ```python
 from klaam import SpeechClassification
 model = SpeechClassification()
 model.classify(wav_file)
 ```
 
-### Speech Recongnition
+### 1.2 Speech Recongnition
+
 ```python
 from klaam import SpeechRecognition
 model = SpeechRecognition()
 model.transcribe(wav_file)
 ```
 
+### 1.3 Text To Speech
 
-### Text To Speech
 ```python
 from klaam import TextToSpeech
 prepare_tts_model_path = "../cfgs/FastSpeech2/config/Arabic/preprocess.yaml"
@@ -37,7 +39,7 @@ model = TextToSpeech(prepare_tts_model_path, model_config_path, train_config_pat
 model.synthesize(sample_text)
 ```
 
-There are two avilable models for recognition trageting MSA and egyptian dialect . You can set any of them using the `lang` attribute
+There are two avilable models for recognition trageting Modern Standard Arabic (MSA) and Egyptian dialect (EGY) . You can set any of them using the `lang` attribute.
 
 ```python
 from klaam import SpeechRecognition
@@ -45,27 +47,28 @@ model = SpeechRecognition(lang = 'msa')
 model.transcribe('file.wav')
 ```
 
-## Datasets
+## 2. Datasets
 
-| Dataset | Description | link |
-|---------| ------------------------------ | ---- |
-| MGB-3  | Egyptian Arabic Speech recognition in the wild. Every sentence was annotated by four annotators. More than 15 hours have been collected from YouTube.  |  requires registeration [here](https://arabicspeech.org/mgb3-asr/)|
-| ADI-5  | More than 50 hours collected from Aljazeera TV.  4 regional dialectal: Egyptian (EGY), Levantine (LAV), Gulf (GLF), North African (NOR), and Modern Standard Arabic (MSA). This dataset is a part of the MGB-3 challenge.  | requires registeration [here](https://arabicspeech.org/mgb3-adi/)|
-|Common voice | Multlilingual dataset avilable on huggingface | [here](https://github.com/huggingface/datasets/tree/master/datasets/common_voice). |
-|Arabic Speech Corpus | Arabic dataset with alignment and transcriptions | [here](http://en.arabicspeechcorpus.com/). |
+| Dataset              | Description                                                                                                                                                                                                              | Link                                                                               |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| MGB-3                | Egyptian Arabic Speech recognition in the wild. Every sentence was annotated by four annotators. More than 15 hours have been collected from YouTube.                                                                    | [here](https://arabicspeech.org/mgb3-asr/) [Registeration required]                |
+| ADI-5                | More than 50 hours collected from Aljazeera TV. 4 regional dialectal: Egyptian (EGY), Levantine (LAV), Gulf (GLF), North African (NOR), and Modern Standard Arabic (MSA). This dataset is a part of the MGB-3 challenge. | [here](https://arabicspeech.org/mgb3-adi/) [Registeration required]                |
+| Common voice         | Multlilingual dataset avilable on huggingface                                                                                                                                                                            | [here](https://github.com/huggingface/datasets/tree/master/datasets/common_voice). |
+| Arabic Speech Corpus | Arabic dataset with alignment and transcriptions                                                                                                                                                                         | [here](http://en.arabicspeechcorpus.com/).                                         |
 
-## Models
+## 3. Models
 
-We currently support four models, three of them are avilable on transformers.
+Our project currently supports four models, three of them are avilable on transformers.
 
-|Language | Description | Source |
-|-------- | ----------- | ------ |
-|Egyptian | Speech recognition | [wav2vec2-large-xlsr-53-arabic-egyptian](https://huggingface.co/arbml/wav2vec2-large-xlsr-53-arabic-egyptian)|
-|Standard Arabic | Speech recognition | [wav2vec2-large-xlsr-53-arabic](https://huggingface.co/elgeish/wav2vec2-large-xlsr-53-arabic)
-|EGY, NOR, LAV, GLF, MSA | Speech classification | [wav2vec2-large-xlsr-dialect-classification](https://huggingface.co/arbml/wav2vec2-large-xlsr-dialect-classification)|
-|Standard Arabic| Text-to-Speech | [fastspeech2]()|
+| Language                | Description           | Source                                                                                                                |
+| ----------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Egyptian                | Speech recognition    | [wav2vec2-large-xlsr-53-arabic-egyptian](https://huggingface.co/arbml/wav2vec2-large-xlsr-53-arabic-egyptian)         |
+| Standard Arabic         | Speech recognition    | [wav2vec2-large-xlsr-53-arabic](https://huggingface.co/elgeish/wav2vec2-large-xlsr-53-arabic)                         |
+| EGY, NOR, LAV, GLF, MSA | Speech classification | [wav2vec2-large-xlsr-dialect-classification](https://huggingface.co/arbml/wav2vec2-large-xlsr-dialect-classification) |
+| Standard Arabic         | Text-to-Speech        | [fastspeech2]()                                                                                                       |
 
-## Example Notebooks
+## 4. Example Notebooks
+
 <table>
   <tr>
     <th><b>Name</b></th>
@@ -90,11 +93,12 @@ We currently support four models, three of them are avilable on transformers.
   </tr>
 <table>
 
-## Training
+## 5. Training
 
 The scripts are a modification of [jqueguiner/wav2vec2-sprint](https://github.com/jqueguiner/wav2vec2-sprint).
 
-### classification
+### 5.1. Classification
+
 This script is used for the classification task on the 5 classes.
 
 ```sh
@@ -117,7 +121,7 @@ python run_classifier.py \
     --do_train \
 ```
 
-### Recognition
+### 5.2. Recognition
 
 This script is for training on the dataset for pretraining on the egyption dialects dataset.
 
@@ -170,25 +174,27 @@ python run_common_voice.py \
     --max_train_samples 100 --max_val_samples 100
 ```
 
-### Text To Speech
+### 5.3. Text To Speech
 
-We use the pytorch implementation of fastspeech2 by [ming024](https://github.com/ming024/FastSpeech2). The procedure is as follows
+We use the pytorch implementation of fastspeech2 by [ming024](https://github.com/ming024/FastSpeech2).
 
-Download the dataset
+The procedure is as the following:
+
+1. Download the dataset and unzip it.
 
 ```
 wget http://en.arabicspeechcorpus.com/arabic-speech-corpus.zip
 unzip arabic-speech-corpus.zip
 ```
 
-Create multiple directories for data
+2. Create multiple directories for data
 
 ```
 mkdir -p raw_data/Arabic/Arabic preprocessed_data/Arabic/TextGrid/Arabic
 cp arabic-speech-corpus/textgrid/* preprocessed_data/Arabic/TextGrid/Arabic
 ```
 
-Prepare metadata
+3. Prepare metadata
 
 ```python
 import os
@@ -201,7 +207,7 @@ for lab_file in os.listdir(f'{base_dir}/lab'):
 open(f'{base_dir}/metadata.csv', 'w').write(('\n').join(lines))
 ```
 
-Clone my fork
+4. Clone my repository (FastSpeech2) and installl the dependencies required.
 
 ```bash
 git clone --depth 1 https://github.com/zaidalyafeai/FastSpeech2
@@ -209,22 +215,24 @@ cd FastSpeech2
 pip install -r requirements.txt
 ```
 
-Prepare alignments and prepreocessed data
+5. Prepare alignments and prepreocessed data.
 
 ```
 python3 prepare_align.py config/Arabic/preprocess.yaml
 python3 preprocess.py config/Arabic/preprocess.yaml
 ```
 
-Unzip vocoders
+6. Unzip vocoders.
 
 ```
 unzip hifigan/generator_LJSpeech.pth.tar.zip -d hifigan
 unzip hifigan/generator_universal.pth.tar.zip -d hifigan
 ```
 
-Start training
+7. Start the training.
 
 ```
 python3 train.py -p config/Arabic/preprocess.yaml -m config/Arabic/model.yaml -t config/Arabic/train.yaml
 ```
+
+This repository was created by the ARBML team. If you have any suggestion or contribution feel free to make a pull request.
